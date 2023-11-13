@@ -4,6 +4,7 @@ const App: React.FC = () => {
   return (
     <div className="app">
       <h1 className="heading">today task</h1>
+      <InputField />
     </div>
   );
 };
