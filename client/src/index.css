@@ -89,3 +89,13 @@ body {
 .input__btn:active {
   transform: scale(0.95);
 }
+
+/* --- TaskList --- */
+.tasks {
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  width: 75%;
+  max-width: 750px;
+  background-color: var(--dark-alabaster);
+}
