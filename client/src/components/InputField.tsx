@@ -6,7 +6,7 @@ interface Props {
 
 const InputField = ({ task, setTask, handleAddTask }: Props) => {
   return (
-    <form className="input" onSubmit={handleAddTask}>
+    <form className="input" onSubmit={(e) => handleAddTask(e)}>
       <input
         type="input"
         placeholder="Enter your task"
