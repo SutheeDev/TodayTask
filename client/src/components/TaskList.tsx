@@ -1,4 +1,5 @@
 import { Task } from "../model";
+import SingleTask from "./SingleTask";
 
 interface Props {
   allTask: Task[];
@@ -8,8 +9,14 @@ interface Props {
 const TaskList: React.FC<Props> = ({ allTask, setAllTask }) => {
   return (
     <div className="tasks">
-      {allTask.map((singleTask) => (
-        <li>{singleTask.task}</li>
+      {allTask.map((eachTask) => (
+        // <li>{eachTask.task}</li>
+        <SingleTask
+          key={eachTask.id}
+          task={eachTask}
+          allTask={allTask}
+          setAllTask={setAllTask}
+        />
       ))}
     </div>
   );
