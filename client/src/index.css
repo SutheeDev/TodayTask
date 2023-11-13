@@ -24,3 +24,16 @@ body {
   align-items: center;
   background-color: var(--ivory);
 }
+
+.heading {
+  text-transform: uppercase;
+  font-size: 2rem;
+  margin: 0.7em 0;
+  color: var(--dark-blue);
+  text-align: center;
+}
+@media screen and (min-width: 750px) {
+  .heading {
+    font-size: 2.5rem;
+  }
+}
