@@ -1,3 +1,5 @@
+import { useRef } from "react";
+
 interface Props {
   task: string;
   setTask: React.Dispatch<React.SetStateAction<string>>;
@@ -5,9 +7,12 @@ interface Props {
 }
 
 const InputField = ({ task, setTask, handleAddTask }: Props) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
   return (
     <form className="input" onSubmit={(e) => handleAddTask(e)}>
       <input
+        ref={inputRef}
         type="input"
         placeholder="Enter your task"
         className="input__field"
