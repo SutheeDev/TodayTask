@@ -1,4 +1,9 @@
-const InputField = () => {
+interface Props {
+  task: string;
+  setTask: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const InputField = ({ task, setTask }: Props) => {
   return (
     <form className="input">
       <input
