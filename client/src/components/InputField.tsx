@@ -10,7 +10,13 @@ const InputField = ({ task, setTask, handleAddTask }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <form className="input" onSubmit={(e) => handleAddTask(e)}>
+    <form
+      className="input"
+      onSubmit={(e) => {
+        handleAddTask(e);
+        inputRef.current?.blur();
+      }}
+    >
       <input
         ref={inputRef}
         type="input"
