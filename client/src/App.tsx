@@ -8,6 +8,17 @@ const App: React.FC = () => {
 
   const handleAddTask = (e: React.FormEvent) => {
     e.preventDefault();
+    if (task) {
+      setAllTask([
+        ...allTask,
+        {
+          id: Date.now(),
+          task: task,
+          isCompleted: false,
+        },
+      ]);
+      setTask("");
+    }
   };
 
   return (
