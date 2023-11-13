@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Task } from "./model";
 import InputField from "./components/InputField";
+import TaskList from "./components/TaskList";
 
 const App: React.FC = () => {
   const [task, setTask] = useState<string>("");
