@@ -26,9 +26,7 @@ const App: React.FC = () => {
     <div className="app">
       <h1 className="heading">today task</h1>
       <InputField task={task} setTask={setTask} handleAddTask={handleAddTask} />
-      {allTask.map((singleTask) => (
-        <li>{singleTask.task}</li>
-      ))}
+      <TaskList allTask={allTask} setAllTask={setAllTask} />
     </div>
   );
 };
