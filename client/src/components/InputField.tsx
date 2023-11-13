@@ -10,9 +10,11 @@ const InputField = ({ task, setTask }: Props) => {
         type="input"
         placeholder="Enter your task"
         className="input__field"
+        value={task}
+        onChange={(e) => setTask(e.target.value)}
       />
       <button type="submit" className="input__btn">
-        Add
+        Enter
       </button>
     </form>
   );

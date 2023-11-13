@@ -3,6 +3,7 @@ import InputField from "./components/InputField";
 
 const App: React.FC = () => {
   const [task, setTask] = useState<string>("");
+  const [allTask, setAllTask] = useState([]);
 
   return (
     <div className="app">
