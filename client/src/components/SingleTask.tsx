@@ -1,4 +1,5 @@
 import { Task } from "../model";
+import { RiCheckLine, RiEditBoxLine, RiDeleteBinLine } from "react-icons/ri";
 
 interface Props {
   task: Task;
@@ -7,6 +8,21 @@ interface Props {
 }
 
 const SingleTask: React.FC<Props> = ({ task, allTask, setAllTask }) => {
-  return <div>SingleTask</div>;
+  return (
+    <div className="single__task">
+      <span className="single__task--text">{task.task}</span>
+      <div>
+        <span className="icon">
+          <RiCheckLine />
+        </span>
+        <span className="icon">
+          <RiEditBoxLine />
+        </span>
+        <span className="icon">
+          <RiDeleteBinLine />
+        </span>
+      </div>
+    </div>
+  );
 };
 export default SingleTask;
