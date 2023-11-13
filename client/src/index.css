@@ -11,9 +11,12 @@ body {
 :root {
   --ash-gray: #b4b8ab;
   --dark-blue: #153243;
+  --dark-blue-opacity: #1532433f;
   --dye: #284b63;
   --ivory: #f4f9e9;
   --alabaster: #eef0eb;
+  --dark-alabaster: #e4e8e0;
+  --white: #ffffff;
 }
 
 .app {
@@ -22,9 +25,10 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: var(--ivory);
+  background-color: var(--alabaster);
 }
 
+/* --- Heading --- */
 .heading {
   text-transform: uppercase;
   font-size: 2rem;
@@ -36,4 +40,52 @@ body {
   .heading {
     font-size: 2.5rem;
   }
+}
+
+/* --- InputField --- */
+.input {
+  display: flex;
+  align-items: center;
+  width: 75%;
+  max-width: 750px;
+  position: relative;
+}
+.input__field {
+  width: 100%;
+  border-radius: 3px;
+  padding: 0.85em 1em;
+  font-size: 1rem;
+  border: none;
+  outline: none;
+}
+.input__field::placeholder {
+  color: var(--ash-gray);
+}
+.input__field:focus {
+  box-shadow: 0 0 10px 1000px var(--dark-blue-opacity);
+}
+.input__btn {
+  position: absolute;
+  background-color: var(--alabaster);
+  right: 0;
+  margin-right: 0.85em;
+  padding: 0.5em 1.6em;
+  text-align: center;
+  color: var(--dark-blue);
+  text-transform: uppercase;
+  border: none;
+  border-radius: 3px;
+  transform-origin: center;
+
+  transition: all 0.2s ease;
+}
+.input__btn:hover {
+  background-color: var(--dark-alabaster);
+  box-shadow: 0px 0.2px 0.4px rgba(0, 0, 0, 0.008),
+    0px 0.5px 0.9px rgba(0, 0, 0, 0.012), 0px 0.9px 1.8px rgba(0, 0, 0, 0.015),
+    0px 1.6px 3.1px rgba(0, 0, 0, 0.018), 0px 2.9px 5.8px rgba(0, 0, 0, 0.022),
+    0px 7px 14px rgba(0, 0, 0, 0.03);
+}
+.input__btn:active {
+  transform: scale(0.95);
 }
