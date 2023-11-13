@@ -1,11 +1,12 @@
 interface Props {
   task: string;
   setTask: React.Dispatch<React.SetStateAction<string>>;
+  handleAddTask: (e: React.FormEvent) => void;
 }
 
-const InputField = ({ task, setTask }: Props) => {
+const InputField = ({ task, setTask, handleAddTask }: Props) => {
   return (
-    <form className="input">
+    <form className="input" onSubmit={handleAddTask}>
       <input
         type="input"
         placeholder="Enter your task"
