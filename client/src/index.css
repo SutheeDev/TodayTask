@@ -1,0 +1,26 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: sans-serif;
+}
+
+:root {
+  --ash-gray: #b4b8ab;
+  --dark-blue: #153243;
+  --dye: #284b63;
+  --ivory: #f4f9e9;
+  --alabaster: #eef0eb;
+}
+
+.app {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--ivory);
+}
