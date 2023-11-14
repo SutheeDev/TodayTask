@@ -16,6 +16,10 @@ const SingleTask: React.FC<Props> = ({ task, allTask, setAllTask }) => {
     );
   };
 
+  const handleDelete = (id: number) => {
+    setAllTask(allTask.filter((task) => task.id !== id));
+  };
+
   return (
     <form className="single__task">
       {task.isCompleted ? (
@@ -30,7 +34,7 @@ const SingleTask: React.FC<Props> = ({ task, allTask, setAllTask }) => {
         <span className="icon">
           <RiEditBoxLine />
         </span>
-        <span className="icon">
+        <span className="icon" onClick={() => handleDelete(task.id)}>
           <RiDeleteBinLine />
         </span>
       </div>
