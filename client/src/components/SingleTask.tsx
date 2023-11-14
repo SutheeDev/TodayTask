@@ -3,7 +3,7 @@ import { RiCheckLine, RiEditBoxLine, RiDeleteBinLine } from "react-icons/ri";
 
 interface Props {
   task: Task;
-  allTask: [Task];
+  allTask: Task[];
   setAllTask: React.Dispatch<React.SetStateAction<Task[]>>;
 }
 
