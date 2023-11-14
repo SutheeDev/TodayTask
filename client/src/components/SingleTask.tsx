@@ -35,7 +35,14 @@ const SingleTask: React.FC<Props> = ({ task, allTask, setAllTask }) => {
         <span className="icon" onClick={() => handleComplete(task.id)}>
           <RiCheckLine />
         </span>
-        <span className="icon">
+        <span
+          className="icon"
+          onClick={() => {
+            if (!isEditing && !task.isCompleted) {
+              setIsEditing(!isEditing);
+            }
+          }}
+        >
           <RiEditBoxLine />
         </span>
         <span className="icon" onClick={() => handleDelete(task.id)}>
