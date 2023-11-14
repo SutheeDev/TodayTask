@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Task } from "../model";
 import { RiCheckLine, RiEditBoxLine, RiDeleteBinLine } from "react-icons/ri";
 
@@ -8,6 +9,9 @@ interface Props {
 }
 
 const SingleTask: React.FC<Props> = ({ task, allTask, setAllTask }) => {
+  const [isEditing, setIsEditing] = useState<boolean>();
+  const [editTask, setEditTask] = useState<string>(task.task);
+
   const handleComplete = (id: number) => {
     setAllTask(
       allTask.map((task) =>
