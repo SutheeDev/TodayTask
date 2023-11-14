@@ -9,7 +9,7 @@ interface Props {
 
 const SingleTask: React.FC<Props> = ({ task, allTask, setAllTask }) => {
   return (
-    <div className="single__task">
+    <form className="single__task">
       <span className="single__task--text">{task.task}</span>
       <div>
         <span className="icon">
@@ -22,7 +22,7 @@ const SingleTask: React.FC<Props> = ({ task, allTask, setAllTask }) => {
           <RiDeleteBinLine />
         </span>
       </div>
-    </div>
+    </form>
   );
 };
 export default SingleTask;

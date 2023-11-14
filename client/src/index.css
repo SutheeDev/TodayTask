@@ -9,11 +9,24 @@ body {
 }
 
 :root {
+  /* grey */
+  --grey-50: #f0f4f8;
+  --grey-100: #d9e2ec;
+  --grey-200: #bcccdc;
+  --grey-300: #9fb3c8;
+  --grey-400: #829ab1;
+  --grey-500: #627d98;
+  --grey-600: #486581;
+  --grey-700: #334e68;
+  --grey-800: #243b53;
+  --grey-900: #102a43;
+
+  /* color */
   --ash-gray: #b4b8ab;
   --dark-blue: #153243;
   --dark-blue-opacity: #1532433f;
-  --dye: #284b63;
-  --ivory: #f4f9e9;
+  /* --dye: #284b63;
+  --ivory: #f4f9e9; */
   --alabaster: #eef0eb;
   --dark-alabaster: #e4e8e0;
   --white: #ffffff;
@@ -97,5 +110,28 @@ body {
   flex-wrap: wrap;
   width: 75%;
   max-width: 750px;
-  background-color: var(--dark-alabaster);
+}
+
+/* --- SingleTask --- */
+.single__task {
+  display: flex;
+  width: 100%;
+  padding: 0.8em 1.2em 0.3em 1.2em;
+  margin-top: 1em;
+  border-bottom: 2px solid var(--dark-alabaster);
+}
+.single__task--text {
+  flex: 1;
+  border: none;
+  font-size: 1rem;
+  color: var(--dark-blue);
+}
+.single__task--text:focus {
+  outline: none;
+}
+.icon {
+  color: var(--dark-blue);
+  margin-left: 0.5em;
+  font-size: 1.2rem;
+  cursor: pointer;
 }
