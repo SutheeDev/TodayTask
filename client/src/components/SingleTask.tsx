@@ -18,7 +18,11 @@ const SingleTask: React.FC<Props> = ({ task, allTask, setAllTask }) => {
 
   return (
     <form className="single__task">
-      <span className="single__task--text">{task.task}</span>
+      {task.isCompleted ? (
+        <s className="single__task--text">{task.task}</s>
+      ) : (
+        <span className="single__task--text">{task.task}</span>
+      )}
       <div>
         <span className="icon" onClick={() => handleComplete(task.id)}>
           <RiCheckLine />
