@@ -8,16 +8,29 @@ interface Props {
 
 const TaskList: React.FC<Props> = ({ allTask, setAllTask }) => {
   return (
-    <div className="tasks">
-      {allTask.map((eachTask) => (
-        // <li>{eachTask.task}</li>
-        <SingleTask
-          key={eachTask.id}
-          task={eachTask}
-          allTask={allTask}
-          setAllTask={setAllTask}
-        />
-      ))}
+    <div className="container">
+      <div className="tasks">
+        <span className="allTask__heading">active tasks</span>
+        {allTask.map((eachTask) => (
+          <SingleTask
+            key={eachTask.id}
+            task={eachTask}
+            allTask={allTask}
+            setAllTask={setAllTask}
+          />
+        ))}
+      </div>
+      <div className="tasks completed">
+        <span className="allTask__heading">completed tasks</span>
+        {allTask.map((eachTask) => (
+          <SingleTask
+            key={eachTask.id}
+            task={eachTask}
+            allTask={allTask}
+            setAllTask={setAllTask}
+          />
+        ))}
+      </div>
     </div>
   );
 };
