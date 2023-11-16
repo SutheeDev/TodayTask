@@ -25,8 +25,9 @@ const TaskList: React.FC<Props> = ({
             {...provided.droppableProps}
           >
             <span className="allTask__heading">active tasks</span>
-            {allTask.map((eachTask) => (
+            {allTask.map((eachTask, index) => (
               <SingleTask
+                index={index}
                 key={eachTask.id}
                 task={eachTask}
                 allTask={allTask}
@@ -44,8 +45,9 @@ const TaskList: React.FC<Props> = ({
             {...provided.droppableProps}
           >
             <span className="allTask__heading">completed tasks</span>
-            {completedTasks.map((eachTask) => (
+            {completedTasks.map((eachTask, index) => (
               <SingleTask
+                index={index}
                 key={eachTask.id}
                 task={eachTask}
                 allTask={completedTasks}
