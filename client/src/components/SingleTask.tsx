@@ -26,7 +26,9 @@ const SingleTask: React.FC<Props> = ({ task, allTask, setAllTask }) => {
 
   return (
     <form className="single__task">
-      {task.isCompleted ? (
+      {isEditing ? (
+        <input />
+      ) : task.isCompleted ? (
         <s className="single__task--text">{task.task}</s>
       ) : (
         <span className="single__task--text">{task.task}</span>
