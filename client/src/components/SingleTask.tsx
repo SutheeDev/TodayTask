@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Task } from "../model";
 import { RiCheckLine, RiEditBoxLine, RiDeleteBinLine } from "react-icons/ri";
 
@@ -11,6 +11,8 @@ interface Props {
 const SingleTask: React.FC<Props> = ({ task, allTask, setAllTask }) => {
   const [isEditing, setIsEditing] = useState<boolean>();
   const [editTask, setEditTask] = useState<string>(task.task);
+
+  const inputRef = useRef<HTMLFormElement>(null);
 
   const handleComplete = (id: number) => {
     setAllTask(
@@ -34,10 +36,15 @@ const SingleTask: React.FC<Props> = ({ task, allTask, setAllTask }) => {
     setIsEditing(false);
   };
 
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, [isEditing]);
+
   return (
     <form className="single__task" onSubmit={(e) => handleEdit(e, task.id)}>
       {isEditing ? (
         <input
+          ref={inputRef}
           value={editTask}
           className="single__task--text edit__input"
           onChange={(e) => setEditTask(e.target.value)}
