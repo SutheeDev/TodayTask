@@ -44,8 +44,14 @@ const SingleTask: React.FC<Props> = ({ task, allTask, setAllTask, index }) => {
 
   return (
     <Draggable draggableId={task.id.toString()} index={index}>
-      {() => (
-        <form className="single__task" onSubmit={(e) => handleEdit(e, task.id)}>
+      {(provided) => (
+        <form
+          className="single__task"
+          onSubmit={(e) => handleEdit(e, task.id)}
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+        >
           {isEditing ? (
             <input
               ref={inputRef}
