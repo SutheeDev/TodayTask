@@ -6,9 +6,10 @@ interface Props {
   task: Task;
   allTask: Task[];
   setAllTask: React.Dispatch<React.SetStateAction<Task[]>>;
+  index: number;
 }
 
-const SingleTask: React.FC<Props> = ({ task, allTask, setAllTask }) => {
+const SingleTask: React.FC<Props> = ({ task, allTask, setAllTask, index }) => {
   const [isEditing, setIsEditing] = useState<boolean>();
   const [editTask, setEditTask] = useState<string>(task.task);
 
