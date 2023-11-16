@@ -24,8 +24,18 @@ const SingleTask: React.FC<Props> = ({ task, allTask, setAllTask }) => {
     setAllTask(allTask.filter((task) => task.id !== id));
   };
 
+  const handleEdit = (e: React.FormEvent, id: number) => {
+    e.preventDefault();
+    setAllTask(
+      allTask.map((oneTask) =>
+        oneTask.id === id ? { ...oneTask, task: editTask } : oneTask
+      )
+    );
+    setIsEditing(false);
+  };
+
   return (
-    <form className="single__task">
+    <form className="single__task" onSubmit={(e) => handleEdit(e, task.id)}>
       {isEditing ? (
         <input
           value={editTask}
