@@ -27,7 +27,11 @@ const SingleTask: React.FC<Props> = ({ task, allTask, setAllTask }) => {
   return (
     <form className="single__task">
       {isEditing ? (
-        <input />
+        <input
+          value={editTask}
+          className="single__task--text edit__input"
+          onChange={(e) => setEditTask(e.target.value)}
+        />
       ) : task.isCompleted ? (
         <s className="single__task--text">{task.task}</s>
       ) : (
