@@ -9,7 +9,12 @@ interface Props {
   setCompletedTasks: React.Dispatch<React.SetStateAction<Task[]>>;
 }
 
-const TaskList: React.FC<Props> = ({ allTask, setAllTask }) => {
+const TaskList: React.FC<Props> = ({
+  allTask,
+  setAllTask,
+  completedTasks,
+  setCompletedTasks,
+}) => {
   return (
     <div className="container">
       <Droppable droppableId="AllTasksList">
@@ -39,12 +44,12 @@ const TaskList: React.FC<Props> = ({ allTask, setAllTask }) => {
             {...provided.droppableProps}
           >
             <span className="allTask__heading">completed tasks</span>
-            {allTask.map((eachTask) => (
+            {completedTasks.map((eachTask) => (
               <SingleTask
                 key={eachTask.id}
                 task={eachTask}
-                allTask={allTask}
-                setAllTask={setAllTask}
+                allTask={completedTasks}
+                setAllTask={setCompletedTasks}
               />
             ))}
           </div>
