@@ -1,5 +1,6 @@
 import { Task } from "../model";
 import SingleTask from "./SingleTask";
+import { Droppable } from "react-beautiful-dnd";
 
 interface Props {
   allTask: Task[];
@@ -11,28 +12,44 @@ interface Props {
 const TaskList: React.FC<Props> = ({ allTask, setAllTask }) => {
   return (
     <div className="container">
-      <div className="tasks">
-        <span className="allTask__heading">active tasks</span>
-        {allTask.map((eachTask) => (
-          <SingleTask
-            key={eachTask.id}
-            task={eachTask}
-            allTask={allTask}
-            setAllTask={setAllTask}
-          />
-        ))}
-      </div>
-      <div className="tasks completed">
-        <span className="allTask__heading">completed tasks</span>
-        {allTask.map((eachTask) => (
-          <SingleTask
-            key={eachTask.id}
-            task={eachTask}
-            allTask={allTask}
-            setAllTask={setAllTask}
-          />
-        ))}
-      </div>
+      <Droppable droppableId="AllTasksList">
+        {(provided) => (
+          <div
+            className="tasks"
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+          >
+            <span className="allTask__heading">active tasks</span>
+            {allTask.map((eachTask) => (
+              <SingleTask
+                key={eachTask.id}
+                task={eachTask}
+                allTask={allTask}
+                setAllTask={setAllTask}
+              />
+            ))}
+          </div>
+        )}
+      </Droppable>
+      <Droppable droppableId="AllTasksCompleted">
+        {(provided) => (
+          <div
+            className="tasks completed"
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+          >
+            <span className="allTask__heading">completed tasks</span>
+            {allTask.map((eachTask) => (
+              <SingleTask
+                key={eachTask.id}
+                task={eachTask}
+                allTask={allTask}
+                setAllTask={setAllTask}
+              />
+            ))}
+          </div>
+        )}
+      </Droppable>
     </div>
   );
 };
