@@ -4,6 +4,8 @@ import SingleTask from "./SingleTask";
 interface Props {
   allTask: Task[];
   setAllTask: React.Dispatch<React.SetStateAction<Task[]>>;
+  completedTasks: Task[];
+  setCompletedTasks: React.Dispatch<React.SetStateAction<Task[]>>;
 }
 
 const TaskList: React.FC<Props> = ({ allTask, setAllTask }) => {
