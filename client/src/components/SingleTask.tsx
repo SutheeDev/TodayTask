@@ -64,7 +64,7 @@ const SingleTask: React.FC<Props> = ({ task, allTask, setAllTask, index }) => {
           ) : (
             <span className="single__task--text">{task.task}</span>
           )}
-          <div>
+          <div className="icons">
             <span className="icon" onClick={() => handleComplete(task.id)}>
               <RiCheckLine />
             </span>

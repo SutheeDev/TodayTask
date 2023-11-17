@@ -34,6 +34,7 @@ const TaskList: React.FC<Props> = ({
                 setAllTask={setAllTask}
               />
             ))}
+            {provided.placeholder}
           </div>
         )}
       </Droppable>
@@ -54,6 +55,7 @@ const TaskList: React.FC<Props> = ({
                 setAllTask={setCompletedTasks}
               />
             ))}
+            {provided.placeholder}
           </div>
         )}
       </Droppable>

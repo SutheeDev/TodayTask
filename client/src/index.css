@@ -138,6 +138,9 @@ body {
     width: 75%;
     max-width: 1000px;
   }
+  .tasks {
+    width: 50%;
+  }
 }
 
 /* --- SingleTask --- */
@@ -163,6 +166,12 @@ body {
   font-size: 1.2rem;
   cursor: pointer;
 }
+.icons {
+  display: flex;
+  align-items: center;
+}
 .edit__input {
   border-radius: 3px;
+  height: 23px;
+  width: 70%;
 }
