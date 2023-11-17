@@ -26,7 +26,9 @@ body {
   --dark-blue: #153243;
   --dark-blue-opacity: #1532433f;
   --light-coral: rgb(229, 215, 209);
+  --dark-coral: rgb(222, 206, 199);
   --mint: #bae1db;
+  --dark-mint: #c1e5e0;
   --alabaster: #eef0eb;
   --dark-alabaster: #e4e8e0;
   --white: #ffffff;
@@ -174,4 +176,13 @@ body {
   border-radius: 3px;
   height: 23px;
   width: 70%;
+}
+
+/* Drag background-color */
+.drag__active {
+  background-color: var(--dark-mint);
+}
+
+.drag__complete {
+  background-color: var(--dark-coral);
 }
