@@ -8,20 +8,37 @@ interface Props {
   allTask: Task[];
   setAllTask: React.Dispatch<React.SetStateAction<Task[]>>;
   index: number;
+  completedTasks: Task[];
+  setCompletedTasks: React.Dispatch<React.SetStateAction<Task[]>>;
 }
 
-const SingleTask: React.FC<Props> = ({ task, allTask, setAllTask, index }) => {
+const SingleTask: React.FC<Props> = ({
+  task,
+  allTask,
+  setAllTask,
+  index,
+  setCompletedTasks,
+}) => {
   const [isEditing, setIsEditing] = useState<boolean>();
   const [editTask, setEditTask] = useState<string>(task.task);
 
   const inputRef = useRef<HTMLFormElement>(null);
 
   const handleComplete = (id: number) => {
-    setAllTask(
-      allTask.map((task) =>
-        task.id === id ? { ...task, isCompleted: !task.isCompleted } : task
-      )
-    );
+    const taskToMove = allTask.find((task) => task.id === id);
+
+    if (taskToMove) {
+      if (taskToMove.isCompleted) {
+        setCompletedTasks((prev) => prev.filter((t) => t.id !== id));
+        setAllTask((prev) => [...prev, { ...taskToMove, isCompleted: false }]);
+      } else {
+        setAllTask((prev) => prev.filter((t) => t.id !== id));
+        setCompletedTasks((prev) => [
+          ...prev,
+          { ...taskToMove, isCompleted: true },
+        ]);
+      }
+    }
   };
 
   const handleDelete = (id: number) => {

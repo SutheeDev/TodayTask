@@ -32,6 +32,8 @@ const TaskList: React.FC<Props> = ({
                 task={eachTask}
                 allTask={allTask}
                 setAllTask={setAllTask}
+                completedTasks={completedTasks}
+                setCompletedTasks={setCompletedTasks}
               />
             ))}
             {provided.placeholder}
@@ -55,6 +57,8 @@ const TaskList: React.FC<Props> = ({
                 task={eachTask}
                 allTask={completedTasks}
                 setAllTask={setCompletedTasks}
+                completedTasks={completedTasks}
+                setCompletedTasks={setCompletedTasks}
               />
             ))}
             {provided.placeholder}
