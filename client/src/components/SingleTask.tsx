@@ -28,10 +28,7 @@ const SingleTask: React.FC<Props> = ({
     const taskToMove = allTask.find((task) => task.id === id);
 
     if (taskToMove) {
-      if (taskToMove.isCompleted) {
-        setCompletedTasks((prev) => prev.filter((t) => t.id !== id));
-        setAllTask((prev) => [...prev, { ...taskToMove, isCompleted: false }]);
-      } else {
+      if (!taskToMove.isCompleted) {
         setAllTask((prev) => prev.filter((t) => t.id !== id));
         setCompletedTasks((prev) => [
           ...prev,
@@ -82,19 +79,23 @@ const SingleTask: React.FC<Props> = ({
             <span className="single__task--text">{task.task}</span>
           )}
           <div className="icons">
-            <span className="icon" onClick={() => handleComplete(task.id)}>
-              <RiCheckLine />
-            </span>
-            <span
-              className="icon"
-              onClick={() => {
-                if (!isEditing && !task.isCompleted) {
-                  setIsEditing(!isEditing);
-                }
-              }}
-            >
-              <RiEditBoxLine />
-            </span>
+            {!task.isCompleted && (
+              <span className="icon" onClick={() => handleComplete(task.id)}>
+                <RiCheckLine />
+              </span>
+            )}
+            {!task.isCompleted && (
+              <span
+                className="icon"
+                onClick={() => {
+                  if (!isEditing) {
+                    setIsEditing(!isEditing);
+                  }
+                }}
+              >
+                <RiEditBoxLine />
+              </span>
+            )}
             <span className="icon" onClick={() => handleDelete(task.id)}>
               <RiDeleteBinLine />
             </span>
