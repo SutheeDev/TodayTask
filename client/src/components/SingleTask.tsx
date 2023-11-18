@@ -22,7 +22,7 @@ const SingleTask: React.FC<Props> = ({
   const [isEditing, setIsEditing] = useState<boolean>();
   const [editTask, setEditTask] = useState<string>(task.task);
 
-  const inputRef = useRef<HTMLFormElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleComplete = (id: number) => {
     const taskToMove = allTask.find((task) => task.id === id);
@@ -84,18 +84,16 @@ const SingleTask: React.FC<Props> = ({
                 <RiCheckLine />
               </span>
             )}
-            {!task.isCompleted && (
-              <span
-                className="icon"
-                onClick={() => {
-                  if (!isEditing) {
-                    setIsEditing(!isEditing);
-                  }
-                }}
-              >
-                <RiEditBoxLine />
-              </span>
-            )}
+            <span
+              className="icon"
+              onClick={() => {
+                if (!isEditing) {
+                  setIsEditing(!isEditing);
+                }
+              }}
+            >
+              <RiEditBoxLine />
+            </span>
             <span className="icon" onClick={() => handleDelete(task.id)}>
               <RiDeleteBinLine />
             </span>
