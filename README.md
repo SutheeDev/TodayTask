@@ -1,5 +1,7 @@
 # TodayTask
 
+![TodayTask application](https://res.cloudinary.com/dnc7potxo/image/upload/v1700426639/ReadMe-Images/TodayTask/TodayTask_wjtoxo.png)
+
 Welcome to TodayTask, a streamlined to-do list application designed for simplicity and efficiency.
 <br><br>
 
@@ -31,6 +33,8 @@ The Edit icon allows users to modify their tasks seamlessly. Clicking on the ico
 Tasks that are no longer needed can be effortlessly removed using the small trash icon on the far left.
 
 ### Drag and Drop Functionality <a name='drag-and-drop'></a>
+
+![Drag and Drop Functionality](https://res.cloudinary.com/dnc7potxo/image/upload/v1700426639/ReadMe-Images/TodayTask/TodayTask_bypfpl.gif)
 
 TodayTask offers a convenient Drag and Drop feature. Users can rearrange tasks within the Active Tasks and Completed Tasks panels or move them between the two. When a task is moved to the Completed Tasks panel, it is automatically marked as completed, while moving it back to the Active Tasks panel removes the strikethrough.
 <br><br>
