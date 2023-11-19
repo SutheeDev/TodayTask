@@ -35,7 +35,7 @@ Tasks that are no longer needed can be effortlessly removed using the small tras
 TodayTask offers a convenient Drag and Drop feature. Users can rearrange tasks within the Active Tasks and Completed Tasks panels or move them between the two. When a task is moved to the Completed Tasks panel, it is automatically marked as completed, while moving it back to the Active Tasks panel removes the strikethrough.
 <br><br>
 
-## Tachnologies Used
+## Tachnologies Used <a name='technologies-used'></a>
 
 - React
 - ViteJS
