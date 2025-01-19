@@ -1,4 +1,4 @@
 [build]
 base = "TodayTask/client"
-publish = "dist"
+publish = "TodayTask/client/dist"
 command = "npm run build"
