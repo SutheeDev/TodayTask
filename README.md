@@ -37,6 +37,11 @@ Tasks that are no longer needed can be effortlessly removed using the small tras
 ![Drag and Drop Functionality](https://res.cloudinary.com/dnc7potxo/image/upload/v1700426639/ReadMe-Images/TodayTask/TodayTask_bypfpl.gif)
 
 TodayTask offers a convenient Drag and Drop feature. Users can rearrange tasks within the Active Tasks and Completed Tasks panels or move them between the two. When a task is moved to the Completed Tasks panel, it is automatically marked as completed, while moving it back to the Active Tasks panel removes the strikethrough.
+
+### Persist data using Local storage
+
+Utilized Local Storage to persist user's tasks to ensure data accessibility even after the browser is closed and reopened.
+
 <br><br>
 
 ## Technologies Used <a name='technologies-used'></a>
