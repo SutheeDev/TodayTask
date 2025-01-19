@@ -14,7 +14,7 @@ const InputField = ({ task, setTask, handleAddTask }: Props) => {
       className="input"
       onSubmit={(e) => {
         handleAddTask(e);
-        inputRef.current?.blur();
+        // inputRef.current?.blur();
       }}
     >
       <input
