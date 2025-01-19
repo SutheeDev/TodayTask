@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Task } from "./model";
 import InputField from "./components/InputField";
 import TaskList from "./components/TaskList";
+import { setLocalStorage, getLocalStorage } from "./utils/localStorage";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 
 const App: React.FC = () => {
@@ -38,27 +39,40 @@ const App: React.FC = () => {
       return;
     }
 
-    let add;
-    let active = allTask;
-    let complete = completedTasks;
+    let movedTask;
+    let active = [...allTask];
+    let complete = [...completedTasks];
 
     if (source.droppableId === "AllTasksList") {
-      add = active[source.index];
-      active.splice(source.index, 1);
+      movedTask = active.splice(source.index, 1)[0];
     } else {
-      add = complete[source.index];
-      complete.splice(source.index, 1);
+      movedTask = complete.splice(source.index, 1)[0];
     }
 
     if (destination.droppableId === "AllTasksList") {
-      active.splice(destination.index, 0, { ...add, isCompleted: false });
+      active.splice(destination.index, 0, { ...movedTask, isCompleted: false });
     } else {
-      complete.splice(destination.index, 0, { ...add, isCompleted: true });
+      complete.splice(destination.index, 0, {
+        ...movedTask,
+        isCompleted: true,
+      });
     }
 
     setCompletedTasks(complete);
     setAllTask(active);
   };
+
+  useEffect(() => {
+    const storedTask = getLocalStorage<Task[]>("allTask");
+    if (storedTask) {
+      setAllTask(storedTask);
+    }
+  }, []);
+
+  useEffect(() => {
+    setLocalStorage("allTask", allTask);
+    setLocalStorage("completedTasks", completedTasks);
+  }, [allTask, completedTasks]);
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
