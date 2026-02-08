@@ -77,8 +77,16 @@ body {
 .input__field::placeholder {
   color: var(--ash-gray);
 }
+.input:focus-within::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-color: var(--dark-blue-opacity);
+  z-index: 1;
+}
 .input__field:focus {
-  box-shadow: 0 0 10px 1000px var(--dark-blue-opacity);
+  position: relative;
+  z-index: 2;
 }
 .input__btn {
   position: absolute;
