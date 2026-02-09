@@ -114,11 +114,6 @@ const SingleTask: React.FC<Props> = ({
                   </span>
                 )}
               </div>
-              {task.description && isExpanded && (
-                <div className="single__task--description">
-                  {task.description}
-                </div>
-              )}
             </div>
           )}
           <div className="icons">
@@ -143,6 +138,11 @@ const SingleTask: React.FC<Props> = ({
               <RiDeleteBinLine />
             </span>
           </div>
+          {task.description && isExpanded && (
+            <div className="single__task--description">
+              {task.description}
+            </div>
+          )}
         </form>
       )}
     </Draggable>

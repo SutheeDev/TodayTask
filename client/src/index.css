@@ -202,8 +202,10 @@ body {
 /* --- SingleTask --- */
 .single__task {
   display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
   width: 100%;
-  padding: 0.8em 1.2em 0.3em 1.2em;
+  padding: 0.8em 1.2em 0.8em 1.2em;
   margin-top: 1em;
   border-bottom: 1px solid var(--alabaster);
 }
@@ -245,8 +247,9 @@ body {
 .single__task--description {
   font-size: 0.85rem;
   color: var(--grey-500);
-  margin-top: 0.3em;
+  margin-top: 0.6em;
   white-space: pre-wrap;
+  flex-basis: 100%;
 }
 .desc-toggle {
   display: inline-flex;
