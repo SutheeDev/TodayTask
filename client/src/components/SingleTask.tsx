@@ -1,6 +1,11 @@
 import { useState, useRef, useEffect } from "react";
 import { Task } from "../model";
-import { RiCheckLine, RiEditBoxLine, RiDeleteBinLine } from "react-icons/ri";
+import {
+  RiCheckLine,
+  RiEditBoxLine,
+  RiDeleteBinLine,
+  RiArrowDownSLine,
+} from "react-icons/ri";
 import { Draggable } from "react-beautiful-dnd";
 
 interface Props {
@@ -21,6 +26,10 @@ const SingleTask: React.FC<Props> = ({
 }) => {
   const [isEditing, setIsEditing] = useState<boolean>();
   const [editTask, setEditTask] = useState<string>(task.task);
+  const [editDescription, setEditDescription] = useState<string>(
+    task.description || ""
+  );
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -46,7 +55,13 @@ const SingleTask: React.FC<Props> = ({
     e.preventDefault();
     setAllTask(
       allTask.map((oneTask) =>
-        oneTask.id === id ? { ...oneTask, task: editTask } : oneTask
+        oneTask.id === id
+          ? {
+              ...oneTask,
+              task: editTask,
+              description: editDescription.trim() || undefined,
+            }
+          : oneTask
       )
     );
     setIsEditing(false);
@@ -67,16 +82,44 @@ const SingleTask: React.FC<Props> = ({
           {...provided.dragHandleProps}
         >
           {isEditing ? (
-            <input
-              ref={inputRef}
-              value={editTask}
-              className="single__task--text edit__input"
-              onChange={(e) => setEditTask(e.target.value)}
-            />
-          ) : task.isCompleted ? (
-            <s className="single__task--text">{task.task}</s>
+            <div className="single__task--content">
+              <input
+                ref={inputRef}
+                value={editTask}
+                className="single__task--text edit__input"
+                onChange={(e) => setEditTask(e.target.value)}
+              />
+              <textarea
+                className="edit__description"
+                placeholder="Add a description (optional)"
+                value={editDescription}
+                onChange={(e) => setEditDescription(e.target.value)}
+                rows={2}
+              />
+            </div>
           ) : (
-            <span className="single__task--text">{task.task}</span>
+            <div className="single__task--content">
+              <div className="single__task--title-row">
+                {task.isCompleted ? (
+                  <s className="single__task--text">{task.task}</s>
+                ) : (
+                  <span className="single__task--text">{task.task}</span>
+                )}
+                {task.description && (
+                  <span
+                    className={`desc-toggle ${isExpanded ? "rotated" : ""}`}
+                    onClick={() => setIsExpanded(!isExpanded)}
+                  >
+                    <RiArrowDownSLine />
+                  </span>
+                )}
+              </div>
+              {task.description && isExpanded && (
+                <div className="single__task--description">
+                  {task.description}
+                </div>
+              )}
+            </div>
           )}
           <div className="icons">
             {!task.isCompleted && (
@@ -88,7 +131,9 @@ const SingleTask: React.FC<Props> = ({
               className="icon"
               onClick={() => {
                 if (!isEditing) {
-                  setIsEditing(!isEditing);
+                  setEditTask(task.task);
+                  setEditDescription(task.description || "");
+                  setIsEditing(true);
                 }
               }}
             >
