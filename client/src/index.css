@@ -61,9 +61,13 @@ body {
 /* --- InputField --- */
 .input {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   width: 75%;
   max-width: 1000px;
+}
+.input__wrapper {
+  display: flex;
+  align-items: center;
   position: relative;
 }
 .input__field {
@@ -73,12 +77,18 @@ body {
   font-size: 1rem;
   border: none;
   outline: none;
+  position: relative;
+  z-index: 2;
 }
 .input__field::placeholder {
   color: var(--ash-gray);
 }
-.input__field:focus {
-  box-shadow: 0 0 10px 1000px var(--dark-blue-opacity);
+.input:focus-within::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-color: var(--dark-blue-opacity);
+  z-index: 1;
 }
 .input__btn {
   position: absolute;
@@ -92,6 +102,7 @@ body {
   border: none;
   border-radius: 3px;
   transform-origin: center;
+  z-index: 2;
 
   transition: all 0.2s ease;
 }
@@ -104,6 +115,48 @@ body {
 }
 .input__btn:active {
   transform: scale(0.95);
+}
+.input__toggle-desc {
+  position: absolute;
+  right: 9em;
+  background-color: var(--alabaster);
+  border: none;
+  border-radius: 3px;
+  color: var(--dark-blue);
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 0.5em 1em;
+  white-space: nowrap;
+  text-transform: uppercase;
+  transform-origin: center;
+  z-index: 2;
+  transition: all 0.2s ease;
+}
+.input__toggle-desc:hover {
+  background-color: var(--dark-alabaster);
+  box-shadow: 0px 0.2px 0.4px rgba(0, 0, 0, 0.008),
+    0px 0.5px 0.9px rgba(0, 0, 0, 0.012), 0px 0.9px 1.8px rgba(0, 0, 0, 0.015),
+    0px 1.6px 3.1px rgba(0, 0, 0, 0.018), 0px 2.9px 5.8px rgba(0, 0, 0, 0.022),
+    0px 7px 14px rgba(0, 0, 0, 0.03);
+}
+.input__toggle-desc:active {
+  transform: scale(0.95);
+}
+.input__description {
+  width: 100%;
+  border-radius: 3px;
+  padding: 0.7em 1em;
+  font-size: 0.9rem;
+  font-family: inherit;
+  border: none;
+  outline: none;
+  resize: vertical;
+  position: relative;
+  z-index: 2;
+  margin-top: 1em;
+}
+.input__description::placeholder {
+  color: var(--ash-gray);
 }
 
 /* --- TaskList --- */
@@ -149,8 +202,10 @@ body {
 /* --- SingleTask --- */
 .single__task {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   width: 100%;
-  padding: 0.8em 1.2em 0.3em 1.2em;
+  padding: 0.8em 1.2em 0.8em 1.2em;
   margin-top: 1em;
   border-bottom: 1px solid var(--alabaster);
 }
@@ -168,6 +223,12 @@ body {
   margin-left: 0.5em;
   font-size: 1.2rem;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s ease;
+}
+.icon:hover {
+  color: var(--grey-400);
 }
 .icons {
   display: flex;
@@ -175,8 +236,52 @@ body {
 }
 .edit__input {
   border-radius: 3px;
-  height: 23px;
+  padding: 0.4em 0.5em;
   width: 70%;
+}
+.single__task--content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.single__task--title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+}
+.single__task--description {
+  font-size: 0.85rem;
+  color: var(--grey-500);
+  margin-top: 0.6em;
+  white-space: pre-wrap;
+  flex-basis: 100%;
+}
+.desc-toggle {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+  flex-shrink: 0;
+}
+.desc-toggle.rotated {
+  transform: rotate(180deg);
+}
+.edit__description {
+  flex-basis: 100%;
+  border-radius: 3px;
+  padding: 0.4em 0.5em;
+  font-size: 0.85rem;
+  font-family: inherit;
+  border: 1px solid var(--grey-200);
+  outline: none;
+  resize: none;
+  overflow: hidden;
+  margin-top: 0.4em;
+  color: var(--dark-blue);
+}
+.edit__description::placeholder {
+  color: var(--ash-gray);
 }
 
 /* Drag background-color */

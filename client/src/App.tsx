@@ -7,6 +7,7 @@ import { DragDropContext, DropResult } from "react-beautiful-dnd";
 
 const App: React.FC = () => {
   const [task, setTask] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
   const [allTask, setAllTask] = useState<Task[]>([]);
   const [completedTasks, setCompletedTasks] = useState<Task[]>([]);
 
@@ -18,10 +19,12 @@ const App: React.FC = () => {
         {
           id: Date.now(),
           task: task,
+          description: description.trim() || undefined,
           isCompleted: false,
         },
       ]);
       setTask("");
+      setDescription("");
     }
   };
 
@@ -81,6 +84,8 @@ const App: React.FC = () => {
         <InputField
           task={task}
           setTask={setTask}
+          description={description}
+          setDescription={setDescription}
           handleAddTask={handleAddTask}
         />
         <TaskList
