@@ -24,7 +24,7 @@ const TaskList: React.FC<Props> = ({
             ref={provided.innerRef}
             {...provided.droppableProps}
           >
-            <span className="allTask__heading">active tasks</span>
+            <span className="allTask__heading">new tasks</span>
             {allTask.map((eachTask, index) => (
               <SingleTask
                 index={index}
