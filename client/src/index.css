@@ -211,6 +211,10 @@ body {
 }
 .single__task--text {
   flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   border: none;
   font-size: 1rem;
   color: var(--dark-blue);
@@ -263,6 +267,8 @@ body {
   cursor: pointer;
   transition: transform 0.1s ease;
   flex-shrink: 0;
+  width: 1.2rem;
+  height: 1.2rem;
 }
 .desc-toggle.rotated {
   transform: rotate(180deg);
