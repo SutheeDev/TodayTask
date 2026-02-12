@@ -2,7 +2,9 @@ import { useState, useEffect } from "react";
 import { Task } from "./model";
 import InputField from "./components/InputField";
 import TaskList from "./components/TaskList";
+import DayTransitionModal from "./components/DayTransitionModal";
 import { setLocalStorage, getLocalStorage } from "./utils/localStorage";
+import { useDayCheck } from "./hooks/useDayCheck";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 
 const App: React.FC = () => {
@@ -10,6 +12,12 @@ const App: React.FC = () => {
   const [description, setDescription] = useState<string>("");
   const [allTask, setAllTask] = useState<Task[]>([]);
   const [completedTasks, setCompletedTasks] = useState<Task[]>([]);
+  const { showTransition, dayGap, lastSeenDayKey, dismissTransition } = useDayCheck();
+
+  const handleReviewComplete = (newActive: Task[]) => {
+    setAllTask(newActive);
+    dismissTransition();
+  };
 
   const handleAddTask = (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,6 +78,10 @@ const App: React.FC = () => {
     if (storedTask) {
       setAllTask(storedTask);
     }
+    const storedCompleted = getLocalStorage<Task[]>("completedTasks");
+    if (storedCompleted) {
+      setCompletedTasks(storedCompleted);
+    }
   }, []);
 
   useEffect(() => {
@@ -80,6 +92,16 @@ const App: React.FC = () => {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="app">
+        {showTransition && (
+          <DayTransitionModal
+            dayGap={dayGap}
+            lastSeenDayKey={lastSeenDayKey}
+            allTask={allTask}
+            completedTasks={completedTasks}
+            onDismiss={dismissTransition}
+            onReviewComplete={handleReviewComplete}
+          />
+        )}
         <h1 className="heading">TodayTask</h1>
         <InputField
           task={task}
