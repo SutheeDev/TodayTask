@@ -7,45 +7,117 @@ interface Props {
   setAllTask: React.Dispatch<React.SetStateAction<Task[]>>;
   completedTasks: Task[];
   setCompletedTasks: React.Dispatch<React.SetStateAction<Task[]>>;
+  onFocus: (id: number) => void;
+  onUnfocus: (id: number) => void;
+  onComplete: (id: number) => void;
+  onDelete: (id: number, fromCompleted?: boolean) => void;
+  onAbandon: (id: number) => void;
+  onCarryOver: (id: number) => void;
+  onEdit: (id: number, newTask: string, newDescription?: string) => void;
+  onEditCompleted: (id: number, newTask: string, newDescription?: string) => void;
 }
 
 const TaskList: React.FC<Props> = ({
   allTask,
-  setAllTask,
   completedTasks,
-  setCompletedTasks,
+  onFocus,
+  onUnfocus,
+  onComplete,
+  onDelete,
+  onAbandon,
+  onCarryOver,
+  onEdit,
+  onEditCompleted,
 }) => {
+  const focusedTasks = allTask.filter((t) => t.isFocused && !t.isCarriedOver);
+  const activeTasks = allTask.filter((t) => !t.isFocused && !t.isCarriedOver);
+  const carriedOverTasks = allTask.filter((t) => t.isCarriedOver);
+
   return (
     <div className="container">
-      <Droppable droppableId="AllTasksList">
-        {(provided, snapshot) => (
-          <div
-            className={`tasks ${snapshot.isDraggingOver ? "drag__active" : ""}`}
-            ref={provided.innerRef}
-            {...provided.droppableProps}
-          >
-            <span className="allTask__heading">new tasks</span>
-            {allTask.map((eachTask, index) => (
+      {/* Left column */}
+      <div className="left-column">
+        {/* Focus section */}
+        {focusedTasks.length > 0 && (
+          <div className="tasks focused-section">
+            <span className="allTask__heading">focus</span>
+            {focusedTasks.map((eachTask, index) => (
               <SingleTask
                 index={index}
                 key={eachTask.id}
                 task={eachTask}
-                allTask={allTask}
-                setAllTask={setAllTask}
-                completedTasks={completedTasks}
-                setCompletedTasks={setCompletedTasks}
+                section="focused"
+                onFocus={onFocus}
+                onUnfocus={onUnfocus}
+                onComplete={onComplete}
+                onDelete={(id) => onDelete(id)}
+                onAbandon={onAbandon}
+                onCarryOver={onCarryOver}
+                onEdit={onEdit}
               />
             ))}
-            {provided.placeholder}
           </div>
         )}
-      </Droppable>
+
+        {/* Active section */}
+        <Droppable droppableId="AllTasksList">
+          {(provided, snapshot) => (
+            <div
+              className={`tasks ${snapshot.isDraggingOver ? "drag__active" : ""}`}
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+            >
+              <span className="allTask__heading">active tasks</span>
+              {activeTasks.map((eachTask, index) => (
+                <SingleTask
+                  index={index}
+                  key={eachTask.id}
+                  task={eachTask}
+                  section="active"
+                  onFocus={onFocus}
+                  onUnfocus={onUnfocus}
+                  onComplete={onComplete}
+                  onDelete={(id) => onDelete(id)}
+                  onAbandon={onAbandon}
+                  onCarryOver={onCarryOver}
+                  onEdit={onEdit}
+                />
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+
+        {/* Carry-over section */}
+        {carriedOverTasks.length > 0 && (
+          <div className="tasks carryover-section">
+            <span className="allTask__heading">carried over</span>
+            {carriedOverTasks.map((eachTask, index) => (
+              <SingleTask
+                index={index}
+                key={eachTask.id}
+                task={eachTask}
+                section="carried-over"
+                onFocus={onFocus}
+                onUnfocus={onUnfocus}
+                onComplete={onComplete}
+                onDelete={(id) => onDelete(id)}
+                onAbandon={onAbandon}
+                onCarryOver={onCarryOver}
+                onEdit={onEdit}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Right column: Completed */}
       <Droppable droppableId="AllTasksCompleted">
         {(provided, snapshot) => (
           <div
             className={`tasks ${
               snapshot.isDraggingOver ? "drag__complete" : "completed"
-            } `}
+            }`}
             ref={provided.innerRef}
             {...provided.droppableProps}
           >
@@ -55,10 +127,9 @@ const TaskList: React.FC<Props> = ({
                 index={index}
                 key={eachTask.id}
                 task={eachTask}
-                allTask={completedTasks}
-                setAllTask={setCompletedTasks}
-                completedTasks={completedTasks}
-                setCompletedTasks={setCompletedTasks}
+                section="completed"
+                onDelete={(id) => onDelete(id, true)}
+                onEdit={onEditCompleted}
               />
             ))}
             {provided.placeholder}
