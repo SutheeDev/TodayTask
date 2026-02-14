@@ -127,7 +127,7 @@ const SingleTask: React.FC<Props> = ({
               value={editDescription}
               onChange={(e) => setEditDescription(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === "Enter") {
+                if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
                   handleEditSubmit(e);
                 }
