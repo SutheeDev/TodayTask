@@ -1,6 +1,4 @@
-import { Task } from "../model";
-
-export const setLocalStorage = (key: string, value: Task[]): void => {
+export const setLocalStorage = <T>(key: string, value: T): void => {
   localStorage.setItem(key, JSON.stringify(value));
 };
 

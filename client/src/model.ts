@@ -3,4 +3,6 @@ export interface Task {
   task: string;
   description?: string;
   isCompleted: boolean;
+  isFocused?: boolean;
+  isCarriedOver?: boolean;
 }
