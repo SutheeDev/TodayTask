@@ -198,6 +198,7 @@ const SingleTask: React.FC<Props> = ({
                 ? onUnfocus?.(task.id)
                 : onFocus?.(task.id)
             }
+            data-tooltip={isFocusedSection ? "Unfocus" : "Focus"}
           >
             {isFocusedSection ? <RiFocusFill /> : <RiFocusLine />}
           </span>
@@ -207,6 +208,7 @@ const SingleTask: React.FC<Props> = ({
           <span
             className={`icon task-icon task-icon--complete${isCompleted ? " active" : ""}`}
             onClick={() => onComplete?.(task.id)}
+            data-tooltip={isCompleted ? "Undo" : "Complete"}
           >
             {isCompleted ? <RiCheckboxFill /> : <RiCheckboxLine />}
           </span>

@@ -456,6 +456,36 @@ body {
   color: var(--ash-gray);
 }
 
+/* --- Tooltips --- */
+[data-tooltip] {
+  position: relative;
+}
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.3em 0.6em;
+  font-size: 0.7rem;
+  white-space: nowrap;
+  background-color: var(--dark-blue);
+  color: var(--white);
+  border-radius: 3px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  margin-bottom: 0.3em;
+}
+[data-tooltip]:hover::after {
+  opacity: 1;
+}
+@media (hover: none) {
+  [data-tooltip]::after {
+    display: none;
+  }
+}
+
 /* Drag background-color */
 .drag__active {
   background-color: var(--dark-mint);
