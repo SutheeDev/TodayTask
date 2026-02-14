@@ -7,6 +7,11 @@ import {
   RiDeleteBinLine,
   RiTimeLine,
   RiCloseCircleLine,
+  RiArrowGoBackLine,
+  RiFocusLine,
+  RiFocusFill,
+  RiCheckboxLine,
+  RiCheckboxFill,
 } from "react-icons/ri";
 import { Draggable, DraggableProvided } from "react-beautiful-dnd";
 
@@ -22,6 +27,7 @@ interface Props {
   onDelete?: (id: number) => void;
   onAbandon?: (id: number) => void;
   onCarryOver?: (id: number) => void;
+  onRestore?: (id: number) => void;
   onEdit?: (id: number, newTask: string, newDescription?: string) => void;
 }
 
@@ -35,6 +41,7 @@ const SingleTask: React.FC<Props> = ({
   onDelete,
   onAbandon,
   onCarryOver,
+  onRestore,
   onEdit,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -86,9 +93,10 @@ const SingleTask: React.FC<Props> = ({
 
   const isFocusedSection = section === "focused";
   const isCompleted = section === "completed";
-  const showDragHandle = section === "active" || section === "carried-over";
+  const isCarriedOver = section === "carried-over";
+  const showDragHandle = section === "active" || section === "carried-over" || section === "completed";
   const showFocusBtn = !isCompleted;
-  const showCompleteBtn = !isCompleted;
+  const showCompleteBtn = true;
 
   const renderContent = (dragHandleProps?: DraggableProvided["dragHandleProps"]) => (
     <form
@@ -111,6 +119,21 @@ const SingleTask: React.FC<Props> = ({
             className="single__task--text edit__input"
             onChange={(e) => setEditTask(e.target.value)}
           />
+          {isExpanded && (
+            <textarea
+              ref={textareaRef}
+              className="edit__description"
+              placeholder="Add a description (optional)"
+              value={editDescription}
+              onChange={(e) => setEditDescription(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleEditSubmit(e);
+                }
+              }}
+            />
+          )}
         </div>
       ) : (
         <div className="single__task--content">
@@ -129,6 +152,9 @@ const SingleTask: React.FC<Props> = ({
               </span>
             )}
           </div>
+          {task.description && isExpanded && (
+            <div className="single__task--description">{task.description}</div>
+          )}
         </div>
       )}
 
@@ -144,38 +170,35 @@ const SingleTask: React.FC<Props> = ({
         )}
 
         {showFocusBtn && (
-          <button
-            type="button"
-            className={`task-btn${isFocusedSection ? " task-btn--focused" : ""}`}
+          <span
+            className={`icon task-icon task-icon--focus${isFocusedSection ? " active" : ""}`}
             onClick={() =>
               isFocusedSection
                 ? onUnfocus?.(task.id)
                 : onFocus?.(task.id)
             }
           >
-            Focus
-          </button>
+            {isFocusedSection ? <RiFocusFill /> : <RiFocusLine />}
+          </span>
         )}
 
         {showCompleteBtn && (
-          <button
-            type="button"
-            className="task-btn"
+          <span
+            className={`icon task-icon task-icon--complete${isCompleted ? " active" : ""}`}
             onClick={() => onComplete?.(task.id)}
           >
-            Done
-          </button>
+            {isCompleted ? <RiCheckboxFill /> : <RiCheckboxLine />}
+          </span>
         )}
 
         {/* Overflow menu */}
         <div className="overflow-menu-wrapper" ref={menuRef}>
-          <button
-            type="button"
-            className="task-btn overflow-trigger"
+          <span
+            className="overflow-trigger"
             onClick={() => setMenuOpen(!menuOpen)}
           >
             &hellip;
-          </button>
+          </span>
           {menuOpen && (
             <div className="overflow-menu">
               <button
@@ -187,16 +210,29 @@ const SingleTask: React.FC<Props> = ({
               </button>
               {!isCompleted && (
                 <>
-                  <button
-                    type="button"
-                    className="overflow-menu__item"
-                    onClick={() => {
-                      onCarryOver?.(task.id);
-                      setMenuOpen(false);
-                    }}
-                  >
-                    <RiTimeLine /> Carry over
-                  </button>
+                  {isCarriedOver ? (
+                    <button
+                      type="button"
+                      className="overflow-menu__item"
+                      onClick={() => {
+                        onRestore?.(task.id);
+                        setMenuOpen(false);
+                      }}
+                    >
+                      <RiArrowGoBackLine /> Move to active
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="overflow-menu__item"
+                      onClick={() => {
+                        onCarryOver?.(task.id);
+                        setMenuOpen(false);
+                      }}
+                    >
+                      <RiTimeLine /> Carry over
+                    </button>
+                  )}
                   <button
                     type="button"
                     className="overflow-menu__item"
@@ -223,31 +259,11 @@ const SingleTask: React.FC<Props> = ({
           )}
         </div>
       </div>
-
-      {/* Description area */}
-      {isEditing && isExpanded && (
-        <textarea
-          ref={textareaRef}
-          className="edit__description"
-          placeholder="Add a description (optional)"
-          value={editDescription}
-          onChange={(e) => setEditDescription(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              handleEditSubmit(e);
-            }
-          }}
-        />
-      )}
-      {!isEditing && task.description && isExpanded && (
-        <div className="single__task--description">{task.description}</div>
-      )}
     </form>
   );
 
-  // Focused and completed tasks are NOT wrapped in Draggable
-  if (section === "focused" || section === "completed") {
+  // Only focused tasks are NOT wrapped in Draggable
+  if (section === "focused") {
     return renderContent();
   }
 

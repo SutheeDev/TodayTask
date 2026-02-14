@@ -13,8 +13,10 @@ interface Props {
   onDelete: (id: number, fromCompleted?: boolean) => void;
   onAbandon: (id: number) => void;
   onCarryOver: (id: number) => void;
+  onRestore: (id: number) => void;
   onEdit: (id: number, newTask: string, newDescription?: string) => void;
   onEditCompleted: (id: number, newTask: string, newDescription?: string) => void;
+  onUncomplete: (id: number) => void;
 }
 
 const TaskList: React.FC<Props> = ({
@@ -26,8 +28,10 @@ const TaskList: React.FC<Props> = ({
   onDelete,
   onAbandon,
   onCarryOver,
+  onRestore,
   onEdit,
   onEditCompleted,
+  onUncomplete,
 }) => {
   const focusedTasks = allTask.filter((t) => t.isFocused && !t.isCarriedOver);
   const activeTasks = allTask.filter((t) => !t.isFocused && !t.isCarriedOver);
@@ -90,24 +94,34 @@ const TaskList: React.FC<Props> = ({
 
         {/* Carry-over section */}
         {carriedOverTasks.length > 0 && (
-          <div className="tasks carryover-section">
-            <span className="allTask__heading">carried over</span>
-            {carriedOverTasks.map((eachTask, index) => (
-              <SingleTask
-                index={index}
-                key={eachTask.id}
-                task={eachTask}
-                section="carried-over"
-                onFocus={onFocus}
-                onUnfocus={onUnfocus}
-                onComplete={onComplete}
-                onDelete={(id) => onDelete(id)}
-                onAbandon={onAbandon}
-                onCarryOver={onCarryOver}
-                onEdit={onEdit}
-              />
-            ))}
-          </div>
+          <Droppable droppableId="CarriedOverList">
+            {(provided) => (
+              <div
+                className="tasks carryover-section"
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+              >
+                <span className="allTask__heading">carried over</span>
+                {carriedOverTasks.map((eachTask, index) => (
+                  <SingleTask
+                    index={index}
+                    key={eachTask.id}
+                    task={eachTask}
+                    section="carried-over"
+                    onFocus={onFocus}
+                    onUnfocus={onUnfocus}
+                    onComplete={onComplete}
+                    onDelete={(id) => onDelete(id)}
+                    onAbandon={onAbandon}
+                    onCarryOver={onCarryOver}
+                    onRestore={onRestore}
+                    onEdit={onEdit}
+                  />
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
         )}
       </div>
 
@@ -128,6 +142,7 @@ const TaskList: React.FC<Props> = ({
                 key={eachTask.id}
                 task={eachTask}
                 section="completed"
+                onComplete={onUncomplete}
                 onDelete={(id) => onDelete(id, true)}
                 onEdit={onEditCompleted}
               />

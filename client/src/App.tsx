@@ -44,7 +44,7 @@ const App: React.FC = () => {
     const focusedCount = allTask.filter((t) => t.isFocused).length;
     if (focusedCount >= MAX_FOCUSED) return;
     setAllTask((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, isFocused: true } : t))
+      prev.map((t) => (t.id === id ? { ...t, isFocused: true, isCarriedOver: false } : t))
     );
   };
 
@@ -65,6 +65,17 @@ const App: React.FC = () => {
     }
   };
 
+  const handleUncomplete = (id: number) => {
+    const taskToMove = completedTasks.find((t) => t.id === id);
+    if (taskToMove) {
+      setCompletedTasks((prev) => prev.filter((t) => t.id !== id));
+      setAllTask((prev) => [
+        ...prev,
+        { ...taskToMove, isCompleted: false, isFocused: false, isCarriedOver: false },
+      ]);
+    }
+  };
+
   const handleDelete = (id: number, fromCompleted?: boolean) => {
     if (fromCompleted) {
       setCompletedTasks((prev) => prev.filter((t) => t.id !== id));
@@ -81,6 +92,14 @@ const App: React.FC = () => {
     setAllTask((prev) =>
       prev.map((t) =>
         t.id === id ? { ...t, isCarriedOver: true, isFocused: false } : t
+      )
+    );
+  };
+
+  const handleRestore = (id: number) => {
+    setAllTask((prev) =>
+      prev.map((t) =>
+        t.id === id ? { ...t, isCarriedOver: false } : t
       )
     );
   };
@@ -115,22 +134,37 @@ const App: React.FC = () => {
     )
       return;
 
-    // Only active (non-focused, non-carried-over) tasks are draggable
     const activeTasks = allTask.filter((t) => !t.isFocused && !t.isCarriedOver);
-    const otherTasks = allTask.filter((t) => t.isFocused || t.isCarriedOver);
+    const focusedTasks = allTask.filter((t) => t.isFocused && !t.isCarriedOver);
+    const carriedOver = allTask.filter((t) => t.isCarriedOver);
 
-    let movedTask;
+    let movedTask: Task;
     const active = [...activeTasks];
+    const carried = [...carriedOver];
     const complete = [...completedTasks];
 
     if (source.droppableId === "AllTasksList") {
       movedTask = active.splice(source.index, 1)[0];
+    } else if (source.droppableId === "CarriedOverList") {
+      movedTask = carried.splice(source.index, 1)[0];
     } else {
       movedTask = complete.splice(source.index, 1)[0];
     }
 
     if (destination.droppableId === "AllTasksList") {
-      active.splice(destination.index, 0, { ...movedTask, isCompleted: false });
+      active.splice(destination.index, 0, {
+        ...movedTask,
+        isCompleted: false,
+        isFocused: false,
+        isCarriedOver: false,
+      });
+    } else if (destination.droppableId === "CarriedOverList") {
+      carried.splice(destination.index, 0, {
+        ...movedTask,
+        isCompleted: false,
+        isFocused: false,
+        isCarriedOver: true,
+      });
     } else {
       complete.splice(destination.index, 0, {
         ...movedTask,
@@ -141,7 +175,7 @@ const App: React.FC = () => {
     }
 
     setCompletedTasks(complete);
-    setAllTask([...otherTasks, ...active]);
+    setAllTask([...focusedTasks, ...active, ...carried]);
   };
 
   useEffect(() => {
@@ -192,8 +226,10 @@ const App: React.FC = () => {
           onDelete={handleDelete}
           onAbandon={handleAbandon}
           onCarryOver={handleCarryOver}
+          onRestore={handleRestore}
           onEdit={handleEdit}
           onEditCompleted={handleEditCompleted}
+          onUncomplete={handleUncomplete}
         />
       </div>
     </DragDropContext>
