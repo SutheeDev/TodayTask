@@ -51,7 +51,10 @@ const App: React.FC = () => {
 
   const handleFocus = (id: number) => {
     const focusedCount = allTask.filter((t) => t.isFocused).length;
-    if (focusedCount >= settings.maxFocused) return;
+    if (focusedCount >= settings.maxFocused) {
+      setToastMessage("Focus limit reached — complete a focused task first");
+      return;
+    }
     setAllTask((prev) =>
       prev.map((t) => (t.id === id ? { ...t, isFocused: true, isCarriedOver: false } : t))
     );
