@@ -284,7 +284,7 @@ body {
   color: var(--dark-blue);
 }
 .task-icon--focus:hover {
-  color: var(--focus-gold-dark);
+  color: var(--grey-400);
 }
 .task-icon--focus.active {
   color: #b8860b;
