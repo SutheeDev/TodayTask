@@ -1,4 +1,11 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
+const LIMIT_MESSAGES = [
+  "Your plate is full — finish something first",
+  "Seven is enough for today. Finish one to add another.",
+  "All slots filled — complete one to make room",
+  "Less is more. Complete a task to continue.",
+];
 
 interface Props {
   task: string;
@@ -6,6 +13,7 @@ interface Props {
   description: string;
   setDescription: React.Dispatch<React.SetStateAction<string>>;
   handleAddTask: (e: React.FormEvent) => void;
+  isAtLimit: boolean;
 }
 
 const InputField = ({
@@ -14,11 +22,23 @@ const InputField = ({
   description,
   setDescription,
   handleAddTask,
+  isAtLimit,
 }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const [showDescription, setShowDescription] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const [limitMessage, setLimitMessage] = useState(
+    () => LIMIT_MESSAGES[Math.floor(Math.random() * LIMIT_MESSAGES.length)]
+  );
+
+  useEffect(() => {
+    if (isAtLimit) {
+      setLimitMessage(
+        LIMIT_MESSAGES[Math.floor(Math.random() * LIMIT_MESSAGES.length)]
+      );
+    }
+  }, [isAtLimit]);
 
   const handleFormFocus = () => {
     setIsFocused(true);
@@ -46,6 +66,14 @@ const InputField = ({
       formRef.current?.requestSubmit();
     }
   };
+
+  if (isAtLimit) {
+    return (
+      <div className="input input__limit-message">
+        {limitMessage}
+      </div>
+    );
+  }
 
   return (
     <form

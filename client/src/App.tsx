@@ -6,8 +6,10 @@ import DayTransitionModal from "./components/DayTransitionModal";
 import { setLocalStorage, getLocalStorage } from "./utils/localStorage";
 import { useDayCheck } from "./hooks/useDayCheck";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
+import Toast from "./components/Toast";
 
 const MAX_FOCUSED = 3;
+const MAX_ACTIVE = 7;
 
 const App: React.FC = () => {
   const [task, setTask] = useState<string>("");
@@ -15,6 +17,9 @@ const App: React.FC = () => {
   const [allTask, setAllTask] = useState<Task[]>([]);
   const [completedTasks, setCompletedTasks] = useState<Task[]>([]);
   const { showTransition, dayGap, lastSeenDayKey, dismissTransition } = useDayCheck();
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const activeCount = allTask.filter((t) => !t.isFocused && !t.isCarriedOver).length;
 
   const handleReviewComplete = (newActive: Task[]) => {
     setAllTask(
@@ -26,6 +31,7 @@ const App: React.FC = () => {
 
   const handleAddTask = (e: React.FormEvent) => {
     e.preventDefault();
+    if (activeCount >= MAX_ACTIVE) return;
     if (task) {
       setAllTask([
         ...allTask,
@@ -50,6 +56,10 @@ const App: React.FC = () => {
   };
 
   const handleUnfocus = (id: number) => {
+    if (activeCount >= MAX_ACTIVE) {
+      setToastMessage("Active task limit reached — complete or remove a task first");
+      return;
+    }
     setAllTask((prev) =>
       prev.map((t) => (t.id === id ? { ...t, isFocused: false } : t))
     );
@@ -67,6 +77,10 @@ const App: React.FC = () => {
   };
 
   const handleUncomplete = (id: number) => {
+    if (activeCount >= MAX_ACTIVE) {
+      setToastMessage("Active task limit reached — complete or remove a task first");
+      return;
+    }
     const taskToMove = completedTasks.find((t) => t.id === id);
     if (taskToMove) {
       setCompletedTasks((prev) => prev.filter((t) => t.id !== id));
@@ -98,6 +112,10 @@ const App: React.FC = () => {
   };
 
   const handleRestore = (id: number) => {
+    if (activeCount >= MAX_ACTIVE) {
+      setToastMessage("Active task limit reached — complete or remove a task first");
+      return;
+    }
     setAllTask((prev) =>
       prev.map((t) =>
         t.id === id ? { ...t, isCarriedOver: false } : t
@@ -134,6 +152,15 @@ const App: React.FC = () => {
       destination.index === source.index
     )
       return;
+
+    if (
+      destination.droppableId === "AllTasksList" &&
+      source.droppableId !== "AllTasksList" &&
+      activeCount >= MAX_ACTIVE
+    ) {
+      setToastMessage("Active task limit reached — complete or remove a task first");
+      return;
+    }
 
     const activeTasks = allTask.filter((t) => !t.isFocused && !t.isCarriedOver);
     const focusedTasks = allTask.filter((t) => t.isFocused && !t.isCarriedOver);
@@ -215,6 +242,7 @@ const App: React.FC = () => {
           description={description}
           setDescription={setDescription}
           handleAddTask={handleAddTask}
+          isAtLimit={activeCount >= MAX_ACTIVE}
         />
         <TaskList
           allTask={allTask}
@@ -232,6 +260,7 @@ const App: React.FC = () => {
           onEditCompleted={handleEditCompleted}
           onUncomplete={handleUncomplete}
         />
+        <Toast message={toastMessage} onDismiss={() => setToastMessage(null)} />
       </div>
     </DragDropContext>
   );
