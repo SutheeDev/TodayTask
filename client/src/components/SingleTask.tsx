@@ -53,11 +53,16 @@ const SingleTask: React.FC<Props> = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  const saveEdit = () => {
+    onEdit?.(task.id, editTask, editDescription.trim() || undefined);
+    setIsEditing(false);
+  };
 
   const handleEditSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onEdit?.(task.id, editTask, editDescription.trim() || undefined);
-    setIsEditing(false);
+    saveEdit();
   };
 
   const startEditing = () => {
@@ -91,6 +96,22 @@ const SingleTask: React.FC<Props> = ({
     return () => document.removeEventListener("mousedown", handleClick);
   }, [menuOpen]);
 
+  // Save and exit edit mode on outside click
+  useEffect(() => {
+    if (!isEditing) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (
+        contentRef.current &&
+        !contentRef.current.contains(target)
+      ) {
+        saveEdit();
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isEditing, editTask, editDescription]);
+
   const isFocusedSection = section === "focused";
   const isCompleted = section === "completed";
   const isCarriedOver = section === "carried-over";
@@ -112,7 +133,7 @@ const SingleTask: React.FC<Props> = ({
 
       {/* Task content */}
       {isEditing ? (
-        <div className="single__task--content">
+        <div className="single__task--content" ref={contentRef}>
           <input
             ref={inputRef}
             value={editTask}
@@ -127,7 +148,7 @@ const SingleTask: React.FC<Props> = ({
               value={editDescription}
               onChange={(e) => setEditDescription(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === "Enter") {
+                if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
                   handleEditSubmit(e);
                 }
@@ -177,6 +198,7 @@ const SingleTask: React.FC<Props> = ({
                 ? onUnfocus?.(task.id)
                 : onFocus?.(task.id)
             }
+            data-tooltip={isFocusedSection ? "Unfocus" : "Focus"}
           >
             {isFocusedSection ? <RiFocusFill /> : <RiFocusLine />}
           </span>
@@ -186,6 +208,7 @@ const SingleTask: React.FC<Props> = ({
           <span
             className={`icon task-icon task-icon--complete${isCompleted ? " active" : ""}`}
             onClick={() => onComplete?.(task.id)}
+            data-tooltip={isCompleted ? "Undo" : "Complete"}
           >
             {isCompleted ? <RiCheckboxFill /> : <RiCheckboxLine />}
           </span>

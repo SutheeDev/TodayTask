@@ -35,6 +35,7 @@ body {
   --white: #ffffff;
   --focus-gold: #f5e6c8;
   --focus-gold-dark: #eddcb8;
+  --focus-gold-darkline: #e7d29d;
 }
 
 .app {
@@ -284,7 +285,7 @@ body {
   color: var(--dark-blue);
 }
 .task-icon--focus:hover {
-  color: var(--focus-gold-dark);
+  color: var(--grey-400);
 }
 .task-icon--focus.active {
   color: #b8860b;
@@ -331,6 +332,7 @@ body {
   cursor: pointer;
   color: var(--dark-blue);
   transition: color 0.2s ease;
+  transform: translateY(-3px);
 }
 .overflow-trigger:hover {
   color: var(--grey-400);
@@ -378,6 +380,9 @@ body {
 }
 .focused-section .allTask__heading {
   color: var(--dark-blue);
+}
+.focused-section .single__task {
+  border-bottom: 1px solid var(--focus-gold-darkline);
 }
 
 /* --- Carry-over section --- */
@@ -434,16 +439,17 @@ body {
   flex-shrink: 0;
   width: 1.2rem;
   height: 1.2rem;
+  transform: translateY(-1px);
 }
 .desc-toggle.rotated {
-  transform: rotate(180deg);
+  transform: rotate(180deg) translateY(1px);
 }
 .edit__description {
   border-radius: 3px;
   padding: 0.4em 0.5em;
   font-size: 0.85rem;
   font-family: inherit;
-  border: 1px solid var(--grey-200);
+  border: none;
   outline: none;
   resize: none;
   overflow: hidden;
@@ -452,6 +458,36 @@ body {
 }
 .edit__description::placeholder {
   color: var(--ash-gray);
+}
+
+/* --- Tooltips --- */
+[data-tooltip] {
+  position: relative;
+}
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.3em 0.6em;
+  font-size: 0.7rem;
+  white-space: nowrap;
+  background-color: var(--dark-blue);
+  color: var(--white);
+  border-radius: 3px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  margin-bottom: 0.3em;
+}
+[data-tooltip]:hover::after {
+  opacity: 1;
+}
+@media (hover: none) {
+  [data-tooltip]::after {
+    display: none;
+  }
 }
 
 /* Drag background-color */
