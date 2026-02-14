@@ -20,6 +20,7 @@ const App: React.FC = () => {
     setAllTask(
       newActive.map((t) => ({ ...t, isFocused: false, isCarriedOver: false }))
     );
+    setCompletedTasks([]);
     dismissTransition();
   };
 
