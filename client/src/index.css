@@ -443,7 +443,7 @@ body {
   padding: 0.4em 0.5em;
   font-size: 0.85rem;
   font-family: inherit;
-  border: 1px solid var(--grey-200);
+  border: none;
   outline: none;
   resize: none;
   overflow: hidden;
