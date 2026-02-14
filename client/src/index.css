@@ -576,6 +576,12 @@ body {
   color: var(--grey-400);
   margin-bottom: 0.6em;
 }
+.modal__section-hint {
+  font-size: 0.75rem;
+  text-transform: none;
+  color: var(--grey-400);
+  opacity: 0.8;
+}
 .modal__task-list {
   display: flex;
   flex-direction: column;

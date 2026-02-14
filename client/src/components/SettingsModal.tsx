@@ -71,6 +71,27 @@ const SettingsModal = ({ settings, onUpdateSetting, onClose }: Props) => {
             </button>
           </div>
         </div>
+
+        <div className="settings__row">
+          <span className="settings__label">Carried-over task limit</span>
+          <div className="settings__stepper">
+            <button
+              className="settings__stepper-btn"
+              disabled={settings.maxCarriedOver <= 1}
+              onClick={() => onUpdateSetting("maxCarriedOver", settings.maxCarriedOver - 1)}
+            >
+              &minus;
+            </button>
+            <span className="settings__stepper-value">{settings.maxCarriedOver}</span>
+            <button
+              className="settings__stepper-btn"
+              disabled={settings.maxCarriedOver >= Math.min(5, settings.maxActive)}
+              onClick={() => onUpdateSetting("maxCarriedOver", settings.maxCarriedOver + 1)}
+            >
+              +
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -12,6 +12,7 @@ interface Props {
   completedTasks: Task[];
   onDismiss: () => void;
   onReviewComplete: (active: Task[]) => void;
+  maxCarriedOver: number;
 }
 
 const GREETING_MESSAGES = [
@@ -40,6 +41,7 @@ const DayTransitionModal: React.FC<Props> = ({
   completedTasks,
   onDismiss,
   onReviewComplete,
+  maxCarriedOver,
 }) => {
   const [greetingMessage] = useState(
     () => GREETING_MESSAGES[Math.floor(Math.random() * GREETING_MESSAGES.length)]
@@ -126,6 +128,10 @@ const DayTransitionModal: React.FC<Props> = ({
   }
 
   // B) Review — 1–6 day gap with active tasks
+  const carryOverCount = allTask.filter(
+    (t) => actions.get(t.id) === "carry-over"
+  ).length;
+
   const actionOptions: { value: TaskAction; label: string }[] = [
     { value: "carry-over", label: "Carry over" },
     { value: "completed", label: "Completed" },
@@ -144,12 +150,19 @@ const DayTransitionModal: React.FC<Props> = ({
 
         {allTask.length > 0 && (
           <div className="modal__section">
-            <h3 className="modal__section-heading">Active tasks</h3>
+            <h3 className="modal__section-heading">
+              Active tasks{" "}
+              <span className="modal__section-hint">
+                ({carryOverCount}/{maxCarriedOver} carried over)
+              </span>
+            </h3>
             <div className="modal__task-list">
               {allTask.map((t) => {
                 const action = actions.get(t.id) ?? "carry-over";
                 const isStrikethrough =
                   action === "completed" || action === "abandoned" || action === "deleted";
+                const carryOverDisabled =
+                  action !== "carry-over" && carryOverCount >= maxCarriedOver;
 
                 return (
                   <div key={t.id} className="modal__task">
@@ -169,6 +182,7 @@ const DayTransitionModal: React.FC<Props> = ({
                               ? " modal__action-pill--active"
                               : ""
                           }`}
+                          disabled={opt.value === "carry-over" && carryOverDisabled}
                           onClick={() => setTaskAction(t.id, opt.value)}
                         >
                           {opt.label}
@@ -206,6 +220,7 @@ const DayTransitionModal: React.FC<Props> = ({
           </button>
           <button
             className="modal__btn modal__btn--primary"
+            disabled={carryOverCount > maxCarriedOver}
             onClick={handleStartToday}
           >
             Start today

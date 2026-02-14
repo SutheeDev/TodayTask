@@ -22,6 +22,7 @@ const App: React.FC = () => {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const activeCount = allTask.filter((t) => !t.isFocused && !t.isCarriedOver).length;
+  const carriedOverCount = allTask.filter((t) => t.isCarriedOver).length;
 
   const handleReviewComplete = (newActive: Task[]) => {
     setAllTask(
@@ -109,6 +110,10 @@ const App: React.FC = () => {
   };
 
   const handleCarryOver = (id: number) => {
+    if (carriedOverCount >= settings.maxCarriedOver) {
+      setToastMessage("Carried-over limit reached — complete or remove a carried-over task first");
+      return;
+    }
     setAllTask((prev) =>
       prev.map((t) =>
         t.id === id ? { ...t, isCarriedOver: true, isFocused: false } : t
@@ -164,6 +169,15 @@ const App: React.FC = () => {
       activeCount >= settings.maxActive
     ) {
       setToastMessage("Active task limit reached — complete or remove a task first");
+      return;
+    }
+
+    if (
+      destination.droppableId === "CarriedOverList" &&
+      source.droppableId !== "CarriedOverList" &&
+      carriedOverCount >= settings.maxCarriedOver
+    ) {
+      setToastMessage("Carried-over limit reached — complete or remove a carried-over task first");
       return;
     }
 
@@ -238,6 +252,7 @@ const App: React.FC = () => {
             completedTasks={completedTasks}
             onDismiss={dismissTransition}
             onReviewComplete={handleReviewComplete}
+            maxCarriedOver={settings.maxCarriedOver}
           />
         )}
         <div className="header">
