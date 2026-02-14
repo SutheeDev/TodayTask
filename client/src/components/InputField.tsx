@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 const LIMIT_MESSAGES = [
   "Your plate is full — finish something first",
-  "Seven is enough for today. Finish one to add another.",
+  "You have enough on your plate. Finish one to add another.",
   "All slots filled — complete one to make room",
   "Less is more. Complete a task to continue.",
 ];

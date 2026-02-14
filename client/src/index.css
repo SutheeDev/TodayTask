@@ -664,3 +664,101 @@ body {
 .modal__btn--secondary:hover {
   background-color: var(--grey-200);
 }
+
+/* --- Settings --- */
+.header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 75%;
+  max-width: 1000px;
+}
+.settings-trigger {
+  position: absolute;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  color: var(--grey-400);
+  cursor: pointer;
+  padding: 0.3em;
+  border-radius: 3px;
+  transition: color 0.2s ease;
+}
+.settings-trigger:hover {
+  color: var(--dark-blue);
+}
+.settings__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5em;
+}
+.settings__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--grey-400);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.settings__close:hover {
+  color: var(--dark-blue);
+}
+.settings__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8em 0;
+}
+.settings__row + .settings__row {
+  border-top: 1px solid var(--grey-100);
+}
+.settings__label {
+  font-size: 0.95rem;
+  color: var(--dark-blue);
+}
+.settings__stepper {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+}
+.settings__stepper-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2em;
+  height: 2em;
+  border: 1px solid var(--grey-200);
+  border-radius: 3px;
+  background-color: var(--white);
+  color: var(--dark-blue);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.settings__stepper-btn:hover:not(:disabled) {
+  background-color: var(--grey-50);
+  border-color: var(--grey-300);
+}
+.settings__stepper-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+.settings__stepper-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+.settings__stepper-value {
+  min-width: 1.5em;
+  text-align: center;
+  font-size: 1rem;
+  color: var(--dark-blue);
+  font-weight: 600;
+}

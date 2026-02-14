@@ -3,13 +3,13 @@ import { Task } from "./model";
 import InputField from "./components/InputField";
 import TaskList from "./components/TaskList";
 import DayTransitionModal from "./components/DayTransitionModal";
+import SettingsModal from "./components/SettingsModal";
 import { setLocalStorage, getLocalStorage } from "./utils/localStorage";
 import { useDayCheck } from "./hooks/useDayCheck";
+import { useSettings } from "./hooks/useSettings";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import Toast from "./components/Toast";
-
-const MAX_FOCUSED = 3;
-const MAX_ACTIVE = 7;
+import { RiSettings3Line } from "react-icons/ri";
 
 const App: React.FC = () => {
   const [task, setTask] = useState<string>("");
@@ -17,6 +17,8 @@ const App: React.FC = () => {
   const [allTask, setAllTask] = useState<Task[]>([]);
   const [completedTasks, setCompletedTasks] = useState<Task[]>([]);
   const { showTransition, dayGap, lastSeenDayKey, dismissTransition } = useDayCheck();
+  const { settings, updateSetting } = useSettings();
+  const [showSettings, setShowSettings] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const activeCount = allTask.filter((t) => !t.isFocused && !t.isCarriedOver).length;
@@ -31,7 +33,7 @@ const App: React.FC = () => {
 
   const handleAddTask = (e: React.FormEvent) => {
     e.preventDefault();
-    if (activeCount >= MAX_ACTIVE) return;
+    if (activeCount >= settings.maxActive) return;
     if (task) {
       setAllTask([
         ...allTask,
@@ -49,14 +51,14 @@ const App: React.FC = () => {
 
   const handleFocus = (id: number) => {
     const focusedCount = allTask.filter((t) => t.isFocused).length;
-    if (focusedCount >= MAX_FOCUSED) return;
+    if (focusedCount >= settings.maxFocused) return;
     setAllTask((prev) =>
       prev.map((t) => (t.id === id ? { ...t, isFocused: true, isCarriedOver: false } : t))
     );
   };
 
   const handleUnfocus = (id: number) => {
-    if (activeCount >= MAX_ACTIVE) {
+    if (activeCount >= settings.maxActive) {
       setToastMessage("Active task limit reached — complete or remove a task first");
       return;
     }
@@ -77,7 +79,7 @@ const App: React.FC = () => {
   };
 
   const handleUncomplete = (id: number) => {
-    if (activeCount >= MAX_ACTIVE) {
+    if (activeCount >= settings.maxActive) {
       setToastMessage("Active task limit reached — complete or remove a task first");
       return;
     }
@@ -112,7 +114,7 @@ const App: React.FC = () => {
   };
 
   const handleRestore = (id: number) => {
-    if (activeCount >= MAX_ACTIVE) {
+    if (activeCount >= settings.maxActive) {
       setToastMessage("Active task limit reached — complete or remove a task first");
       return;
     }
@@ -156,7 +158,7 @@ const App: React.FC = () => {
     if (
       destination.droppableId === "AllTasksList" &&
       source.droppableId !== "AllTasksList" &&
-      activeCount >= MAX_ACTIVE
+      activeCount >= settings.maxActive
     ) {
       setToastMessage("Active task limit reached — complete or remove a task first");
       return;
@@ -235,14 +237,30 @@ const App: React.FC = () => {
             onReviewComplete={handleReviewComplete}
           />
         )}
-        <h1 className="heading">TodayTask</h1>
+        <div className="header">
+          <h1 className="heading">TodayTask</h1>
+          <button
+            className="settings-trigger"
+            onClick={() => setShowSettings(true)}
+            data-tooltip="Settings"
+          >
+            <RiSettings3Line />
+          </button>
+        </div>
+        {showSettings && (
+          <SettingsModal
+            settings={settings}
+            onUpdateSetting={updateSetting}
+            onClose={() => setShowSettings(false)}
+          />
+        )}
         <InputField
           task={task}
           setTask={setTask}
           description={description}
           setDescription={setDescription}
           handleAddTask={handleAddTask}
-          isAtLimit={activeCount >= MAX_ACTIVE}
+          isAtLimit={activeCount >= settings.maxActive}
         />
         <TaskList
           allTask={allTask}
