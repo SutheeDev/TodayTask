@@ -149,7 +149,7 @@ const DayTransitionModal: React.FC<Props> = ({
               {allTask.map((t) => {
                 const action = actions.get(t.id) ?? "carry-over";
                 const isStrikethrough =
-                  action === "abandoned" || action === "deleted";
+                  action === "completed" || action === "abandoned" || action === "deleted";
 
                 return (
                   <div key={t.id} className="modal__task">
