@@ -22,7 +22,9 @@ const App: React.FC = () => {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const activeCount = allTask.filter((t) => !t.isFocused && !t.isCarriedOver).length;
+  const focusedCount = allTask.filter((t) => t.isFocused).length;
   const carriedOverCount = allTask.filter((t) => t.isCarriedOver).length;
+  const isFocusAtLimit = focusedCount >= settings.maxFocused;
 
   const handleReviewComplete = (newActive: Task[]) => {
     setAllTask(
@@ -32,9 +34,9 @@ const App: React.FC = () => {
     dismissTransition();
   };
 
-  const handleAddTask = (e: React.FormEvent) => {
+  const handleAddTask = (e: React.FormEvent, isFocused: boolean = false) => {
     e.preventDefault();
-    if (activeCount >= settings.maxActive) return;
+    if (!isFocused && activeCount >= settings.maxActive) return;
     if (task) {
       setAllTask([
         ...allTask,
@@ -43,6 +45,7 @@ const App: React.FC = () => {
           task: task,
           description: description.trim() || undefined,
           isCompleted: false,
+          isFocused: isFocused || undefined,
         },
       ]);
       setTask("");
@@ -51,7 +54,6 @@ const App: React.FC = () => {
   };
 
   const handleFocus = (id: number) => {
-    const focusedCount = allTask.filter((t) => t.isFocused).length;
     if (focusedCount >= settings.maxFocused) {
       setToastMessage("Focus limit reached — complete a focused task first");
       return;
@@ -279,6 +281,8 @@ const App: React.FC = () => {
           setDescription={setDescription}
           handleAddTask={handleAddTask}
           isAtLimit={activeCount >= settings.maxActive}
+          isFocusAtLimit={isFocusAtLimit}
+          onShowToast={setToastMessage}
         />
         <TaskList
           allTask={allTask}

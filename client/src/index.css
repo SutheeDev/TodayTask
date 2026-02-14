@@ -127,31 +127,44 @@ body {
 .input__btn:active {
   transform: scale(0.95);
 }
-.input__toggle-desc {
+.input__toolbar {
   position: absolute;
-  right: 9em;
-  background-color: var(--alabaster);
-  border: none;
-  border-radius: 3px;
-  color: var(--dark-blue);
-  font-size: 0.8rem;
-  cursor: pointer;
-  padding: 0.5em 1em;
-  white-space: nowrap;
-  text-transform: uppercase;
-  transform-origin: center;
+  right: 6.5em;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
   z-index: 2;
+}
+.input__quick-focus {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--dark-blue);
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0;
   transition: all 0.2s ease;
 }
-.input__toggle-desc:hover {
-  background-color: var(--dark-alabaster);
-  box-shadow: 0px 0.2px 0.4px rgba(0, 0, 0, 0.008),
-    0px 0.5px 0.9px rgba(0, 0, 0, 0.012), 0px 0.9px 1.8px rgba(0, 0, 0, 0.015),
-    0px 1.6px 3.1px rgba(0, 0, 0, 0.018), 0px 2.9px 5.8px rgba(0, 0, 0, 0.022),
-    0px 7px 14px rgba(0, 0, 0, 0.03);
+.input__desc-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--dark-blue);
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s ease;
 }
-.input__toggle-desc:active {
-  transform: scale(0.95);
+.input__quick-focus--active {
+  color: #b8860b;
+}
+.input__quick-focus--disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
 }
 .input__description {
   width: 100%;
