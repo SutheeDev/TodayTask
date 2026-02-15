@@ -16,8 +16,8 @@ const App: React.FC = () => {
   const [description, setDescription] = useState<string>("");
   const [allTask, setAllTask] = useState<Task[]>([]);
   const [completedTasks, setCompletedTasks] = useState<Task[]>([]);
-  const { showTransition, dayGap, lastSeenDayKey, dismissTransition } = useDayCheck();
   const { settings, updateSetting } = useSettings();
+  const { showTransition, dayGap, lastSeenDayKey, dismissTransition } = useDayCheck(settings.dayBoundaryMinutes);
   const [showSettings, setShowSettings] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 

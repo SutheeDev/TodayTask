@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { getTodayKey, getDaysDifference } from "../utils/dateUtils";
 import { getLocalStorage, setLocalStorage } from "../utils/localStorage";
 
@@ -11,13 +11,15 @@ interface UseDayCheckReturn {
 
 const STORAGE_KEY = "lastSeenDayKey";
 
-export const useDayCheck = (): UseDayCheckReturn => {
+export const useDayCheck = (dayBoundaryMinutes: number): UseDayCheckReturn => {
   const [showTransition, setShowTransition] = useState(false);
   const [dayGap, setDayGap] = useState(0);
   const [lastSeenDayKey, setLastSeenDayKey] = useState<string | null>(null);
+  const boundaryRef = useRef(dayBoundaryMinutes);
+  boundaryRef.current = dayBoundaryMinutes;
 
   const checkDay = useCallback(() => {
-    const today = getTodayKey();
+    const today = getTodayKey(boundaryRef.current);
     const stored = getLocalStorage<string>(STORAGE_KEY);
 
     if (!stored) {
@@ -40,7 +42,7 @@ export const useDayCheck = (): UseDayCheckReturn => {
   }, []);
 
   const dismissTransition = useCallback(() => {
-    const today = getTodayKey();
+    const today = getTodayKey(boundaryRef.current);
     setLocalStorage(STORAGE_KEY, today);
     setShowTransition(false);
   }, []);

@@ -5,12 +5,14 @@ export interface AppSettings {
   maxActive: number;
   maxFocused: number;
   maxCarriedOver: number;
+  dayBoundaryMinutes: number;
 }
 
 const DEFAULT_SETTINGS: AppSettings = {
   maxActive: 7,
   maxFocused: 3,
   maxCarriedOver: 3,
+  dayBoundaryMinutes: 180,
 };
 
 const STORAGE_KEY = "appSettings";
@@ -19,6 +21,7 @@ const RANGES: Record<keyof AppSettings, [number, number]> = {
   maxActive: [1, 10],
   maxFocused: [1, 3],
   maxCarriedOver: [1, 5],
+  dayBoundaryMinutes: [0, 360],
 };
 
 export const useSettings = () => {

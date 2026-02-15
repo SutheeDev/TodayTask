@@ -8,6 +8,14 @@ interface Props {
   onClose: () => void;
 }
 
+const formatBoundaryTime = (minutes: number): string => {
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  const period = h < 12 ? "AM" : "PM";
+  const hour12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+  return `${hour12}:${String(m).padStart(2, "0")} ${period}`;
+};
+
 const SettingsModal = ({ settings, onUpdateSetting, onClose }: Props) => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -87,6 +95,27 @@ const SettingsModal = ({ settings, onUpdateSetting, onClose }: Props) => {
               className="settings__stepper-btn"
               disabled={settings.maxCarriedOver >= Math.min(5, settings.maxActive)}
               onClick={() => onUpdateSetting("maxCarriedOver", settings.maxCarriedOver + 1)}
+            >
+              +
+            </button>
+          </div>
+        </div>
+
+        <div className="settings__row">
+          <span className="settings__label">Day boundary</span>
+          <div className="settings__stepper">
+            <button
+              className="settings__stepper-btn"
+              disabled={settings.dayBoundaryMinutes <= 0}
+              onClick={() => onUpdateSetting("dayBoundaryMinutes", settings.dayBoundaryMinutes - 30)}
+            >
+              &minus;
+            </button>
+            <span className="settings__stepper-value">{formatBoundaryTime(settings.dayBoundaryMinutes)}</span>
+            <button
+              className="settings__stepper-btn"
+              disabled={settings.dayBoundaryMinutes >= 360}
+              onClick={() => onUpdateSetting("dayBoundaryMinutes", settings.dayBoundaryMinutes + 30)}
             >
               +
             </button>
