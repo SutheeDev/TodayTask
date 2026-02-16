@@ -602,8 +602,8 @@ body {
 }
 .modal__task {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 0.5em;
   padding: 0.6em 0.8em;
   background-color: var(--grey-50);
@@ -614,13 +614,17 @@ body {
   padding: 0.4em 0.8em;
 }
 .modal__task-text {
-  flex: 1;
-  min-width: 0;
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   font-size: 0.95rem;
   color: var(--dark-blue);
+}
+.modal__task-text--sliding .modal__task-inner {
+  display: inline-block;
+  transform: translateX(var(--overflow));
+  transition: transform var(--slide-duration, 0.5s) linear;
 }
 .modal__task--strikethrough {
   text-decoration: line-through;
@@ -630,6 +634,7 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: 0.3em;
+  align-self: flex-end;
 }
 .modal__action-pill {
   font-size: 0.75rem;

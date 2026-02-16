@@ -132,6 +132,21 @@ const DayTransitionModal: React.FC<Props> = ({
     { value: "deleted", label: "Delete" },
   ];
 
+  const handleTextEnter = (e: React.MouseEvent<HTMLSpanElement>) => {
+    const el = e.currentTarget;
+    if (el.scrollWidth > el.clientWidth) {
+      const overflow = el.scrollWidth - el.clientWidth;
+      const duration = 0.3 + overflow / 120;
+      el.style.setProperty('--overflow', `-${overflow}px`);
+      el.style.setProperty('--slide-duration', `${duration}s`);
+      el.classList.add('modal__task-text--sliding');
+    }
+  };
+
+  const handleTextLeave = (e: React.MouseEvent<HTMLSpanElement>) => {
+    e.currentTarget.classList.remove('modal__task-text--sliding');
+  };
+
   const renderTaskRow = (t: Task, showFocusBadge: boolean) => {
     const action = actions.get(t.id) ?? null;
     const isStrikethrough =
@@ -145,9 +160,13 @@ const DayTransitionModal: React.FC<Props> = ({
           className={`modal__task-text${
             isStrikethrough ? " modal__task--strikethrough" : ""
           }`}
+          onMouseEnter={handleTextEnter}
+          onMouseLeave={handleTextLeave}
         >
-          {showFocusBadge && <span className="modal__focus-badge"><RiFocusFill /></span>}
-          {t.task}
+          <span className="modal__task-inner">
+            {showFocusBadge && <span className="modal__focus-badge"><RiFocusFill /></span>}
+            {t.task}
+          </span>
         </span>
         <div className="modal__actions">
           {actionOptions.map((opt) => {
