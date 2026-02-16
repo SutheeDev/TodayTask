@@ -676,12 +676,75 @@ body {
 .modal__btn--primary:hover {
   opacity: 0.9;
 }
+.modal__btn--muted {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 .modal__btn--secondary {
   background-color: var(--grey-100);
   color: var(--grey-700);
 }
 .modal__btn--secondary:hover {
   background-color: var(--grey-200);
+}
+.modal__expand-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+  background: none;
+  border: none;
+  color: var(--grey-500);
+  font-size: 0.82rem;
+  cursor: pointer;
+  padding: 0.25em 0;
+}
+.modal__expand-toggle:hover {
+  color: var(--grey-700);
+}
+.modal__expand-toggle svg {
+  font-size: 1.1em;
+  transition: transform 0.2s ease;
+}
+.modal__expand-toggle--flipped {
+  transform: rotate(180deg);
+}
+.modal__focus-badge {
+  color: var(--focus-gold-darkline);
+  margin-right: 0.35em;
+  font-size: 0.85em;
+}
+.modal__action-pill--disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.modal__carry-over-status {
+  display: flex;
+  align-items: center;
+  gap: 0.75em;
+  padding: 0.5em 0;
+  font-size: 0.85rem;
+}
+.modal__carry-over-count {
+  color: var(--grey-500);
+}
+.modal__carry-over-count--at-limit {
+  color: var(--grey-700);
+  font-weight: 600;
+}
+.modal__limit-message {
+  color: #c53030;
+  font-size: 0.82rem;
+  animation: limitFadeIn 0.2s ease-out;
+}
+@keyframes limitFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* --- Settings --- */
