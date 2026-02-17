@@ -222,14 +222,16 @@ body {
     align-items: flex-start;
   }
   .left-column {
-    width: 50%;
+    width: calc(50% - 0.75em);
+    min-width: 0;
   }
-  .tasks {
+  .left-column .tasks {
     width: 100%;
   }
   /* Right column completed tasks */
   .container > .tasks {
-    width: 50%;
+    width: calc(50% - 0.75em);
+    min-width: 0;
   }
 }
 
