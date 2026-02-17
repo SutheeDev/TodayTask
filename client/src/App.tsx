@@ -3,28 +3,40 @@ import { Task } from "./model";
 import InputField from "./components/InputField";
 import TaskList from "./components/TaskList";
 import DayTransitionModal from "./components/DayTransitionModal";
+import SettingsModal from "./components/SettingsModal";
 import { setLocalStorage, getLocalStorage } from "./utils/localStorage";
 import { useDayCheck } from "./hooks/useDayCheck";
+import { useSettings } from "./hooks/useSettings";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
-
-const MAX_FOCUSED = 3;
+import Toast from "./components/Toast";
+import { RiSettings3Line } from "react-icons/ri";
 
 const App: React.FC = () => {
   const [task, setTask] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [allTask, setAllTask] = useState<Task[]>([]);
   const [completedTasks, setCompletedTasks] = useState<Task[]>([]);
-  const { showTransition, dayGap, lastSeenDayKey, dismissTransition } = useDayCheck();
+  const { settings, updateSetting } = useSettings();
+  const { showTransition, dayGap, lastSeenDayKey, dismissTransition } = useDayCheck(settings.dayBoundaryMinutes);
+  const [showSettings, setShowSettings] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const activeCount = allTask.filter((t) => !t.isFocused && !t.isCarriedOver).length;
+  const focusedCount = allTask.filter((t) => t.isFocused).length;
+  const carriedOverCount = allTask.filter((t) => t.isCarriedOver).length;
+  const isFocusAtLimit = focusedCount >= settings.maxFocused;
 
   const handleReviewComplete = (newActive: Task[]) => {
     setAllTask(
       newActive.map((t) => ({ ...t, isFocused: false, isCarriedOver: false }))
     );
+    setCompletedTasks([]);
     dismissTransition();
   };
 
-  const handleAddTask = (e: React.FormEvent) => {
+  const handleAddTask = (e: React.FormEvent, isFocused: boolean = false) => {
     e.preventDefault();
+    if (!isFocused && activeCount >= settings.maxActive) return;
     if (task) {
       setAllTask([
         ...allTask,
@@ -33,6 +45,7 @@ const App: React.FC = () => {
           task: task,
           description: description.trim() || undefined,
           isCompleted: false,
+          isFocused: isFocused || undefined,
         },
       ]);
       setTask("");
@@ -41,14 +54,20 @@ const App: React.FC = () => {
   };
 
   const handleFocus = (id: number) => {
-    const focusedCount = allTask.filter((t) => t.isFocused).length;
-    if (focusedCount >= MAX_FOCUSED) return;
+    if (focusedCount >= settings.maxFocused) {
+      setToastMessage("Focus limit reached — complete a focused task first");
+      return;
+    }
     setAllTask((prev) =>
       prev.map((t) => (t.id === id ? { ...t, isFocused: true, isCarriedOver: false } : t))
     );
   };
 
   const handleUnfocus = (id: number) => {
+    if (activeCount >= settings.maxActive) {
+      setToastMessage("Active task limit reached — complete or remove a task first");
+      return;
+    }
     setAllTask((prev) =>
       prev.map((t) => (t.id === id ? { ...t, isFocused: false } : t))
     );
@@ -66,6 +85,10 @@ const App: React.FC = () => {
   };
 
   const handleUncomplete = (id: number) => {
+    if (activeCount >= settings.maxActive) {
+      setToastMessage("Active task limit reached — complete or remove a task first");
+      return;
+    }
     const taskToMove = completedTasks.find((t) => t.id === id);
     if (taskToMove) {
       setCompletedTasks((prev) => prev.filter((t) => t.id !== id));
@@ -84,11 +107,11 @@ const App: React.FC = () => {
     }
   };
 
-  const handleAbandon = (id: number) => {
-    setAllTask((prev) => prev.filter((t) => t.id !== id));
-  };
-
   const handleCarryOver = (id: number) => {
+    if (carriedOverCount >= settings.maxCarriedOver) {
+      setToastMessage("Carried-over limit reached — complete or remove a carried-over task first");
+      return;
+    }
     setAllTask((prev) =>
       prev.map((t) =>
         t.id === id ? { ...t, isCarriedOver: true, isFocused: false } : t
@@ -97,6 +120,10 @@ const App: React.FC = () => {
   };
 
   const handleRestore = (id: number) => {
+    if (activeCount >= settings.maxActive) {
+      setToastMessage("Active task limit reached — complete or remove a task first");
+      return;
+    }
     setAllTask((prev) =>
       prev.map((t) =>
         t.id === id ? { ...t, isCarriedOver: false } : t
@@ -133,6 +160,24 @@ const App: React.FC = () => {
       destination.index === source.index
     )
       return;
+
+    if (
+      destination.droppableId === "AllTasksList" &&
+      source.droppableId !== "AllTasksList" &&
+      activeCount >= settings.maxActive
+    ) {
+      setToastMessage("Active task limit reached — complete or remove a task first");
+      return;
+    }
+
+    if (
+      destination.droppableId === "CarriedOverList" &&
+      source.droppableId !== "CarriedOverList" &&
+      carriedOverCount >= settings.maxCarriedOver
+    ) {
+      setToastMessage("Carried-over limit reached — complete or remove a carried-over task first");
+      return;
+    }
 
     const activeTasks = allTask.filter((t) => !t.isFocused && !t.isCarriedOver);
     const focusedTasks = allTask.filter((t) => t.isFocused && !t.isCarriedOver);
@@ -205,15 +250,35 @@ const App: React.FC = () => {
             completedTasks={completedTasks}
             onDismiss={dismissTransition}
             onReviewComplete={handleReviewComplete}
+            maxCarriedOver={settings.maxCarriedOver}
           />
         )}
-        <h1 className="heading">TodayTask</h1>
+        <div className="header">
+          <h1 className="heading">TodayTask</h1>
+          <button
+            className="settings-trigger"
+            onClick={() => setShowSettings(true)}
+            data-tooltip="Settings"
+          >
+            <RiSettings3Line />
+          </button>
+        </div>
+        {showSettings && (
+          <SettingsModal
+            settings={settings}
+            onUpdateSetting={updateSetting}
+            onClose={() => setShowSettings(false)}
+          />
+        )}
         <InputField
           task={task}
           setTask={setTask}
           description={description}
           setDescription={setDescription}
           handleAddTask={handleAddTask}
+          isAtLimit={activeCount >= settings.maxActive}
+          isFocusAtLimit={isFocusAtLimit}
+          onShowToast={setToastMessage}
         />
         <TaskList
           allTask={allTask}
@@ -224,13 +289,13 @@ const App: React.FC = () => {
           onUnfocus={handleUnfocus}
           onComplete={handleComplete}
           onDelete={handleDelete}
-          onAbandon={handleAbandon}
           onCarryOver={handleCarryOver}
           onRestore={handleRestore}
           onEdit={handleEdit}
           onEditCompleted={handleEditCompleted}
           onUncomplete={handleUncomplete}
         />
+        <Toast message={toastMessage} onDismiss={() => setToastMessage(null)} />
       </div>
     </DragDropContext>
   );

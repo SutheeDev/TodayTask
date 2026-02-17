@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { RiArrowDownSLine, RiCheckboxLine, RiCheckboxFill, RiTimeLine, RiTimeFill } from "react-icons/ri";
 import { Task } from "../model";
+import Toast from "./Toast";
 
 const AUTO_ABANDON_DAYS = 7;
 
-type TaskAction = "carry-over" | "completed" | "abandoned" | "deleted";
+type TaskAction = "carry-over" | "completed";
 
 interface Props {
   dayGap: number;
@@ -12,6 +14,7 @@ interface Props {
   completedTasks: Task[];
   onDismiss: () => void;
   onReviewComplete: (active: Task[]) => void;
+  maxCarriedOver: number;
 }
 
 const GREETING_MESSAGES = [
@@ -40,18 +43,57 @@ const DayTransitionModal: React.FC<Props> = ({
   completedTasks,
   onDismiss,
   onReviewComplete,
+  maxCarriedOver,
 }) => {
   const [greetingMessage] = useState(
     () => GREETING_MESSAGES[Math.floor(Math.random() * GREETING_MESSAGES.length)]
   );
 
-  const [actions, setActions] = useState<Map<number, TaskAction>>(() => {
-    const map = new Map<number, TaskAction>();
-    allTask.forEach((t) => map.set(t.id, "carry-over"));
+  // Split tasks into 3 groups
+  const focusedTasks = allTask.filter((t) => t.isFocused);
+  const carriedOverTasks = allTask.filter((t) => t.isCarriedOver && !t.isFocused);
+  const activeTasks = allTask.filter((t) => !t.isFocused && !t.isCarriedOver);
+
+  const [actions, setActions] = useState<Map<number, TaskAction | null>>(() => {
+    const map = new Map<number, TaskAction | null>();
+    let slots = maxCarriedOver;
+    // Only pre-select carried-over tasks; focused and active start with null
+    for (const t of carriedOverTasks) {
+      map.set(t.id, slots > 0 ? "carry-over" : null);
+      if (slots > 0) slots--;
+    }
+    for (const t of [...focusedTasks, ...activeTasks]) {
+      map.set(t.id, null);
+    }
     return map;
   });
 
+  const [limitMessage, setLimitMessage] = useState<string | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [completedExpanded, setCompletedExpanded] = useState(false);
+
+  const carryOverCount = allTask.filter(
+    (t) => actions.get(t.id) === "carry-over"
+  ).length;
+
   const setTaskAction = (id: number, action: TaskAction) => {
+    const current = actions.get(id) ?? null;
+    if (current === action) {
+      setLimitMessage(null);
+      setActions((prev) => {
+        const next = new Map(prev);
+        next.set(id, null);
+        return next;
+      });
+      return;
+    }
+    if (action === "carry-over" && carryOverCount >= maxCarriedOver) {
+      setLimitMessage(
+        `You can only carry over ${maxCarriedOver} tasks. Change another task first.`
+      );
+      return;
+    }
+    setLimitMessage(null);
     setActions((prev) => {
       const next = new Map(prev);
       next.set(id, action);
@@ -59,19 +101,82 @@ const DayTransitionModal: React.FC<Props> = ({
     });
   };
 
-  const handleAbandonAll = () => {
+  const handleCompleteAll = () => {
+    setLimitMessage(null);
     setActions((prev) => {
       const next = new Map(prev);
-      allTask.forEach((t) => next.set(t.id, "abandoned"));
+      allTask.forEach((t) => next.set(t.id, "completed"));
       return next;
     });
   };
 
+  const unresolvedCount = allTask.filter(
+    (t) => actions.get(t.id) === null
+  ).length;
+
   const handleStartToday = () => {
+    if (unresolvedCount > 0) {
+      setToastMessage("Please decide on all tasks before continuing.");
+      return;
+    }
     const carryOver = allTask.filter(
       (t) => actions.get(t.id) === "carry-over"
     );
     onReviewComplete(carryOver);
+  };
+
+  const handleTextEnter = (e: React.MouseEvent<HTMLSpanElement>) => {
+    const el = e.currentTarget;
+    if (el.scrollWidth > el.clientWidth) {
+      const overflow = el.scrollWidth - el.clientWidth;
+      const duration = 0.3 + overflow / 120;
+      el.style.setProperty('--overflow', `-${overflow}px`);
+      el.style.setProperty('--slide-duration', `${duration}s`);
+      el.classList.add('modal__task-text--sliding');
+    }
+  };
+
+  const handleTextLeave = (e: React.MouseEvent<HTMLSpanElement>) => {
+    e.currentTarget.classList.remove('modal__task-text--sliding');
+  };
+
+  const renderTaskRow = (t: Task) => {
+    const action = actions.get(t.id) ?? null;
+    const isStrikethrough = action === "completed";
+    const carryOverDisabled =
+      action !== "carry-over" && carryOverCount >= maxCarriedOver;
+
+    return (
+      <div key={t.id} className="modal__task">
+        <span
+          className={`modal__task-text${
+            isStrikethrough ? " modal__task--strikethrough" : ""
+          }`}
+          onMouseEnter={handleTextEnter}
+          onMouseLeave={handleTextLeave}
+        >
+          <span className="modal__task-inner">
+            {t.task}
+          </span>
+        </span>
+        <div className="modal__actions">
+          <span
+            className={`modal__action-icon${action === "carry-over" ? " modal__action-icon--active" : ""}${carryOverDisabled ? " modal__action-icon--disabled" : ""}`}
+            data-tooltip="Carry over"
+            onClick={() => setTaskAction(t.id, "carry-over")}
+          >
+            {action === "carry-over" ? <RiTimeFill /> : <RiTimeLine />}
+          </span>
+          <span
+            className={`modal__action-icon${action === "completed" ? " modal__action-icon--active" : ""}`}
+            data-tooltip="Complete"
+            onClick={() => setTaskAction(t.id, "completed")}
+          >
+            {action === "completed" ? <RiCheckboxFill /> : <RiCheckboxLine />}
+          </span>
+        </div>
+      </div>
+    );
   };
 
   // A) Greeting — no active tasks
@@ -126,13 +231,6 @@ const DayTransitionModal: React.FC<Props> = ({
   }
 
   // B) Review — 1–6 day gap with active tasks
-  const actionOptions: { value: TaskAction; label: string }[] = [
-    { value: "carry-over", label: "Carry over" },
-    { value: "completed", label: "Completed" },
-    { value: "abandoned", label: "Abandoned" },
-    { value: "deleted", label: "Delete" },
-  ];
-
   return (
     <div className="modal__overlay">
       <div className="modal__container modal__container--review">
@@ -142,75 +240,100 @@ const DayTransitionModal: React.FC<Props> = ({
           {lastSeenDayKey ? formatDateLabel(lastSeenDayKey) : "a previous day"}.
         </p>
 
-        {allTask.length > 0 && (
-          <div className="modal__section">
+        {carriedOverTasks.length > 0 && (
+          <div className="modal__section modal__section--carried-over">
+            <h3 className="modal__section-heading">Carried over (previously)</h3>
+            <div className="modal__task-list">
+              {carriedOverTasks.map((t) => renderTaskRow(t))}
+            </div>
+          </div>
+        )}
+
+        {focusedTasks.length > 0 && (
+          <div className="modal__section modal__section--focused">
+            <h3 className="modal__section-heading">Focused (from yesterday)</h3>
+            <div className="modal__task-list">
+              {focusedTasks.map((t) => renderTaskRow(t))}
+            </div>
+          </div>
+        )}
+
+        {activeTasks.length > 0 && (
+          <div className="modal__section modal__section--active">
             <h3 className="modal__section-heading">Active tasks</h3>
             <div className="modal__task-list">
-              {allTask.map((t) => {
-                const action = actions.get(t.id) ?? "carry-over";
-                const isStrikethrough =
-                  action === "abandoned" || action === "deleted";
+              {activeTasks.map((t) => renderTaskRow(t))}
+            </div>
+          </div>
+        )}
 
-                return (
-                  <div key={t.id} className="modal__task">
-                    <span
-                      className={`modal__task-text${
-                        isStrikethrough ? " modal__task--strikethrough" : ""
-                      }`}
-                    >
+        {completedTasks.length > 0 && (() => {
+          const visibleCompleted =
+            completedTasks.length <= 3 || completedExpanded
+              ? completedTasks
+              : completedTasks.slice(0, 3);
+          const hiddenCount = completedTasks.length - 3;
+
+          return (
+            <div className="modal__section modal__section--completed">
+              <h3 className="modal__section-heading">Completed tasks</h3>
+              <div className="modal__task-list">
+                {visibleCompleted.map((t) => (
+                  <div key={t.id} className="modal__task modal__task--readonly">
+                    <span className="modal__task-text modal__task--strikethrough">
                       {t.task}
                     </span>
-                    <div className="modal__actions">
-                      {actionOptions.map((opt) => (
-                        <button
-                          key={opt.value}
-                          className={`modal__action-pill${
-                            action === opt.value
-                              ? " modal__action-pill--active"
-                              : ""
-                          }`}
-                          onClick={() => setTaskAction(t.id, opt.value)}
-                        >
-                          {opt.label}
-                        </button>
-                      ))}
-                    </div>
                   </div>
-                );
-              })}
+                ))}
+                {hiddenCount > 0 && (
+                  <button
+                    className="modal__expand-toggle"
+                    onClick={() => setCompletedExpanded((prev) => !prev)}
+                  >
+                    <RiArrowDownSLine className={completedExpanded ? "modal__expand-toggle--flipped" : ""} />
+                    {completedExpanded ? "Show less" : `Show ${hiddenCount} more`}
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
 
-        {completedTasks.length > 0 && (
-          <div className="modal__section">
-            <h3 className="modal__section-heading">Completed tasks</h3>
-            <div className="modal__task-list">
-              {completedTasks.map((t) => (
-                <div key={t.id} className="modal__task modal__task--readonly">
-                  <span className="modal__task-text modal__task--strikethrough">
-                    {t.task}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        <div className="modal__carry-over-status">
+          <span
+            className={`modal__carry-over-count${
+              carryOverCount >= maxCarriedOver
+                ? " modal__carry-over-count--at-limit"
+                : ""
+            }`}
+          >
+            {carryOverCount}/{maxCarriedOver} carried over
+          </span>
+          {limitMessage && (
+            <span className="modal__limit-message">{limitMessage}</span>
+          )}
+        </div>
 
         <div className="modal__footer">
           <button
             className="modal__btn modal__btn--secondary"
-            onClick={handleAbandonAll}
+            onClick={handleCompleteAll}
           >
-            Abandon All
+            Complete All
           </button>
           <button
-            className="modal__btn modal__btn--primary"
+            className={`modal__btn modal__btn--primary${unresolvedCount > 0 ? " modal__btn--muted" : ""}`}
+            disabled={carryOverCount > maxCarriedOver}
             onClick={handleStartToday}
           >
             Start today
           </button>
         </div>
+
+        <Toast
+          message={toastMessage}
+          onDismiss={() => setToastMessage(null)}
+        />
       </div>
     </div>
   );

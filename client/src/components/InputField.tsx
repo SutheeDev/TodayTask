@@ -1,11 +1,22 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { RiFocusLine, RiFocusFill, RiFileListLine, RiFileListFill } from "react-icons/ri";
+
+const LIMIT_MESSAGES = [
+  "Your plate is full — finish something first",
+  "You have enough on your plate. Finish one to add another.",
+  "All slots filled — complete one to make room",
+  "Less is more. Complete a task to continue.",
+];
 
 interface Props {
   task: string;
   setTask: React.Dispatch<React.SetStateAction<string>>;
   description: string;
   setDescription: React.Dispatch<React.SetStateAction<string>>;
-  handleAddTask: (e: React.FormEvent) => void;
+  handleAddTask: (e: React.FormEvent, isFocused: boolean) => void;
+  isAtLimit: boolean;
+  isFocusAtLimit: boolean;
+  onShowToast: (msg: string) => void;
 }
 
 const InputField = ({
@@ -14,11 +25,30 @@ const InputField = ({
   description,
   setDescription,
   handleAddTask,
+  isAtLimit,
+  isFocusAtLimit,
+  onShowToast,
 }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const [showDescription, setShowDescription] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const [quickFocus, setQuickFocus] = useState(false);
+  const [limitMessage, setLimitMessage] = useState(
+    () => LIMIT_MESSAGES[Math.floor(Math.random() * LIMIT_MESSAGES.length)]
+  );
+
+  useEffect(() => {
+    if (isFocusAtLimit) setQuickFocus(false);
+  }, [isFocusAtLimit]);
+
+  useEffect(() => {
+    if (isAtLimit) {
+      setLimitMessage(
+        LIMIT_MESSAGES[Math.floor(Math.random() * LIMIT_MESSAGES.length)]
+      );
+    }
+  }, [isAtLimit]);
 
   const handleFormFocus = () => {
     setIsFocused(true);
@@ -47,6 +77,14 @@ const InputField = ({
     }
   };
 
+  if (isAtLimit) {
+    return (
+      <div className="input input__limit-message">
+        {limitMessage}
+      </div>
+    );
+  }
+
   return (
     <form
       ref={formRef}
@@ -54,7 +92,8 @@ const InputField = ({
       onFocus={handleFormFocus}
       onBlur={handleFormBlur}
       onSubmit={(e) => {
-        handleAddTask(e);
+        handleAddTask(e, quickFocus);
+        setQuickFocus(false);
         setShowDescription(false);
         setIsFocused(false);
         if (document.activeElement instanceof HTMLElement) {
@@ -77,18 +116,35 @@ const InputField = ({
           }}
         />
         {(isFocused || showDescription) && (
-          <button
-            type="button"
-            className="input__toggle-desc"
-            onClick={() => {
-              if (showDescription) {
-                inputRef.current?.focus();
-              }
-              setShowDescription(!showDescription);
-            }}
-          >
-            {showDescription ? "Hide description" : "Add description"}
-          </button>
+          <div className="input__toolbar">
+            <button
+              type="button"
+              className={`input__quick-focus${isFocusAtLimit ? " input__quick-focus--disabled" : ""}${quickFocus ? " input__quick-focus--active" : ""}`}
+              onClick={() => {
+                if (isFocusAtLimit) {
+                  onShowToast("Focus limit reached — complete a focused task first");
+                  return;
+                }
+                setQuickFocus(!quickFocus);
+              }}
+              data-tooltip={quickFocus ? "Unfocus" : "Focus"}
+            >
+              {quickFocus ? <RiFocusFill /> : <RiFocusLine />}
+            </button>
+            <button
+              type="button"
+              className="input__desc-toggle"
+              onClick={() => {
+                if (showDescription) {
+                  inputRef.current?.focus();
+                }
+                setShowDescription(!showDescription);
+              }}
+              data-tooltip={showDescription ? "Hide description" : "Add description"}
+            >
+              {showDescription ? <RiFileListFill /> : <RiFileListLine />}
+            </button>
+          </div>
         )}
         <button type="submit" className="input__btn">
           Enter
