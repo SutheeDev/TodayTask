@@ -253,6 +253,11 @@ body {
   font-size: 1rem;
   color: var(--dark-blue);
 }
+.single__task--text-sliding .single__task--text-inner {
+  display: inline-block;
+  transform: translateX(var(--overflow));
+  transition: transform var(--slide-duration, 0.5s) linear;
+}
 .single__task--text:focus {
   outline: none;
 }

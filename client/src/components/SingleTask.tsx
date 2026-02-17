@@ -112,6 +112,21 @@ const SingleTask: React.FC<Props> = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isEditing, editTask, editDescription]);
 
+  const handleTextEnter = (e: React.MouseEvent<HTMLSpanElement>) => {
+    const el = e.currentTarget;
+    if (el.scrollWidth > el.clientWidth) {
+      const overflow = el.scrollWidth - el.clientWidth;
+      const duration = 0.3 + overflow / 120;
+      el.style.setProperty('--overflow', `-${overflow}px`);
+      el.style.setProperty('--slide-duration', `${duration}s`);
+      el.classList.add('single__task--text-sliding');
+    }
+  };
+
+  const handleTextLeave = (e: React.MouseEvent<HTMLSpanElement>) => {
+    e.currentTarget.classList.remove('single__task--text-sliding');
+  };
+
   const isFocusedSection = section === "focused";
   const isCompleted = section === "completed";
   const isCarriedOver = section === "carried-over";
@@ -160,9 +175,21 @@ const SingleTask: React.FC<Props> = ({
         <div className="single__task--content">
           <div className="single__task--title-row">
             {isCompleted ? (
-              <s className="single__task--text">{task.task}</s>
+              <s
+                className="single__task--text"
+                onMouseEnter={handleTextEnter}
+                onMouseLeave={handleTextLeave}
+              >
+                <span className="single__task--text-inner">{task.task}</span>
+              </s>
             ) : (
-              <span className="single__task--text">{task.task}</span>
+              <span
+                className="single__task--text"
+                onMouseEnter={handleTextEnter}
+                onMouseLeave={handleTextLeave}
+              >
+                <span className="single__task--text-inner">{task.task}</span>
+              </span>
             )}
             {task.description && (
               <span
