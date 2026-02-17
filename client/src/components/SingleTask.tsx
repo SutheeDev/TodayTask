@@ -6,7 +6,7 @@ import {
   RiEditBoxLine,
   RiDeleteBinLine,
   RiTimeLine,
-  RiCloseCircleLine,
+
   RiArrowGoBackLine,
   RiFocusLine,
   RiFocusFill,
@@ -25,7 +25,7 @@ interface Props {
   onUnfocus?: (id: number) => void;
   onComplete?: (id: number) => void;
   onDelete?: (id: number) => void;
-  onAbandon?: (id: number) => void;
+
   onCarryOver?: (id: number) => void;
   onRestore?: (id: number) => void;
   onEdit?: (id: number, newTask: string, newDescription?: string) => void;
@@ -39,7 +39,7 @@ const SingleTask: React.FC<Props> = ({
   onUnfocus,
   onComplete,
   onDelete,
-  onAbandon,
+
   onCarryOver,
   onRestore,
   onEdit,
@@ -256,16 +256,6 @@ const SingleTask: React.FC<Props> = ({
                       <RiTimeLine /> Carry over
                     </button>
                   )}
-                  <button
-                    type="button"
-                    className="overflow-menu__item"
-                    onClick={() => {
-                      onAbandon?.(task.id);
-                      setMenuOpen(false);
-                    }}
-                  >
-                    <RiCloseCircleLine /> Abandon
-                  </button>
                 </>
               )}
               <button

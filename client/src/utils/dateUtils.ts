@@ -1,6 +1,5 @@
 export const getTodayKey = (dayBoundaryMinutes: number = 0): string => {
   const d = new Date();
-  d.setHours(2, 0, 0, 0); // TEMP: simulate 2:00 AM — remove after testing
   d.setMinutes(d.getMinutes() - dayBoundaryMinutes);
   const year = d.getFullYear();
   const month = String(d.getMonth() + 1).padStart(2, "0");

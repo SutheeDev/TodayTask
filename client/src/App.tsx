@@ -107,10 +107,6 @@ const App: React.FC = () => {
     }
   };
 
-  const handleAbandon = (id: number) => {
-    setAllTask((prev) => prev.filter((t) => t.id !== id));
-  };
-
   const handleCarryOver = (id: number) => {
     if (carriedOverCount >= settings.maxCarriedOver) {
       setToastMessage("Carried-over limit reached — complete or remove a carried-over task first");
@@ -293,7 +289,6 @@ const App: React.FC = () => {
           onUnfocus={handleUnfocus}
           onComplete={handleComplete}
           onDelete={handleDelete}
-          onAbandon={handleAbandon}
           onCarryOver={handleCarryOver}
           onRestore={handleRestore}
           onEdit={handleEdit}

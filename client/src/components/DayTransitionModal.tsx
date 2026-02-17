@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { RiFocusFill, RiArrowDownSLine } from "react-icons/ri";
+import { RiArrowDownSLine, RiCheckboxLine, RiCheckboxFill, RiTimeLine, RiTimeFill } from "react-icons/ri";
 import { Task } from "../model";
 import Toast from "./Toast";
 
 const AUTO_ABANDON_DAYS = 7;
 
-type TaskAction = "carry-over" | "completed" | "abandoned" | "deleted";
+type TaskAction = "carry-over" | "completed";
 
 interface Props {
   dayGap: number;
@@ -59,7 +59,7 @@ const DayTransitionModal: React.FC<Props> = ({
     let slots = maxCarriedOver;
     // Only pre-select carried-over tasks; focused and active start with null
     for (const t of carriedOverTasks) {
-      map.set(t.id, slots > 0 ? "carry-over" : "abandoned");
+      map.set(t.id, slots > 0 ? "carry-over" : null);
       if (slots > 0) slots--;
     }
     for (const t of [...focusedTasks, ...activeTasks]) {
@@ -101,11 +101,11 @@ const DayTransitionModal: React.FC<Props> = ({
     });
   };
 
-  const handleAbandonAll = () => {
+  const handleCompleteAll = () => {
     setLimitMessage(null);
     setActions((prev) => {
       const next = new Map(prev);
-      allTask.forEach((t) => next.set(t.id, "abandoned"));
+      allTask.forEach((t) => next.set(t.id, "completed"));
       return next;
     });
   };
@@ -125,13 +125,6 @@ const DayTransitionModal: React.FC<Props> = ({
     onReviewComplete(carryOver);
   };
 
-  const actionOptions: { value: TaskAction; label: string }[] = [
-    { value: "carry-over", label: "Carry over" },
-    { value: "completed", label: "Completed" },
-    { value: "abandoned", label: "Abandoned" },
-    { value: "deleted", label: "Delete" },
-  ];
-
   const handleTextEnter = (e: React.MouseEvent<HTMLSpanElement>) => {
     const el = e.currentTarget;
     if (el.scrollWidth > el.clientWidth) {
@@ -147,10 +140,9 @@ const DayTransitionModal: React.FC<Props> = ({
     e.currentTarget.classList.remove('modal__task-text--sliding');
   };
 
-  const renderTaskRow = (t: Task, showFocusBadge: boolean) => {
+  const renderTaskRow = (t: Task) => {
     const action = actions.get(t.id) ?? null;
-    const isStrikethrough =
-      action === "completed" || action === "abandoned" || action === "deleted";
+    const isStrikethrough = action === "completed";
     const carryOverDisabled =
       action !== "carry-over" && carryOverCount >= maxCarriedOver;
 
@@ -164,26 +156,24 @@ const DayTransitionModal: React.FC<Props> = ({
           onMouseLeave={handleTextLeave}
         >
           <span className="modal__task-inner">
-            {showFocusBadge && <span className="modal__focus-badge"><RiFocusFill /></span>}
             {t.task}
           </span>
         </span>
         <div className="modal__actions">
-          {actionOptions.map((opt) => {
-            const isDisabled =
-              opt.value === "carry-over" && carryOverDisabled;
-            return (
-              <button
-                key={opt.value}
-                className={`modal__action-pill${
-                  action === opt.value ? " modal__action-pill--active" : ""
-                }${isDisabled ? " modal__action-pill--disabled" : ""}`}
-                onClick={() => setTaskAction(t.id, opt.value)}
-              >
-                {opt.label}
-              </button>
-            );
-          })}
+          <span
+            className={`modal__action-icon${action === "carry-over" ? " modal__action-icon--active" : ""}${carryOverDisabled ? " modal__action-icon--disabled" : ""}`}
+            data-tooltip="Carry over"
+            onClick={() => setTaskAction(t.id, "carry-over")}
+          >
+            {action === "carry-over" ? <RiTimeFill /> : <RiTimeLine />}
+          </span>
+          <span
+            className={`modal__action-icon${action === "completed" ? " modal__action-icon--active" : ""}`}
+            data-tooltip="Complete"
+            onClick={() => setTaskAction(t.id, "completed")}
+          >
+            {action === "completed" ? <RiCheckboxFill /> : <RiCheckboxLine />}
+          </span>
         </div>
       </div>
     );
@@ -251,28 +241,28 @@ const DayTransitionModal: React.FC<Props> = ({
         </p>
 
         {carriedOverTasks.length > 0 && (
-          <div className="modal__section">
+          <div className="modal__section modal__section--carried-over">
             <h3 className="modal__section-heading">Carried over (previously)</h3>
             <div className="modal__task-list">
-              {carriedOverTasks.map((t) => renderTaskRow(t, false))}
+              {carriedOverTasks.map((t) => renderTaskRow(t))}
             </div>
           </div>
         )}
 
         {focusedTasks.length > 0 && (
-          <div className="modal__section">
+          <div className="modal__section modal__section--focused">
             <h3 className="modal__section-heading">Focused (from yesterday)</h3>
             <div className="modal__task-list">
-              {focusedTasks.map((t) => renderTaskRow(t, true))}
+              {focusedTasks.map((t) => renderTaskRow(t))}
             </div>
           </div>
         )}
 
         {activeTasks.length > 0 && (
-          <div className="modal__section">
+          <div className="modal__section modal__section--active">
             <h3 className="modal__section-heading">Active tasks</h3>
             <div className="modal__task-list">
-              {activeTasks.map((t) => renderTaskRow(t, false))}
+              {activeTasks.map((t) => renderTaskRow(t))}
             </div>
           </div>
         )}
@@ -285,7 +275,7 @@ const DayTransitionModal: React.FC<Props> = ({
           const hiddenCount = completedTasks.length - 3;
 
           return (
-            <div className="modal__section">
+            <div className="modal__section modal__section--completed">
               <h3 className="modal__section-heading">Completed tasks</h3>
               <div className="modal__task-list">
                 {visibleCompleted.map((t) => (
@@ -327,9 +317,9 @@ const DayTransitionModal: React.FC<Props> = ({
         <div className="modal__footer">
           <button
             className="modal__btn modal__btn--secondary"
-            onClick={handleAbandonAll}
+            onClick={handleCompleteAll}
           >
-            Abandon All
+            Complete All
           </button>
           <button
             className={`modal__btn modal__btn--primary${unresolvedCount > 0 ? " modal__btn--muted" : ""}`}

@@ -11,7 +11,7 @@ interface Props {
   onUnfocus: (id: number) => void;
   onComplete: (id: number) => void;
   onDelete: (id: number, fromCompleted?: boolean) => void;
-  onAbandon: (id: number) => void;
+
   onCarryOver: (id: number) => void;
   onRestore: (id: number) => void;
   onEdit: (id: number, newTask: string, newDescription?: string) => void;
@@ -26,7 +26,7 @@ const TaskList: React.FC<Props> = ({
   onUnfocus,
   onComplete,
   onDelete,
-  onAbandon,
+
   onCarryOver,
   onRestore,
   onEdit,
@@ -55,7 +55,7 @@ const TaskList: React.FC<Props> = ({
                 onUnfocus={onUnfocus}
                 onComplete={onComplete}
                 onDelete={(id) => onDelete(id)}
-                onAbandon={onAbandon}
+
                 onCarryOver={onCarryOver}
                 onEdit={onEdit}
               />
@@ -82,7 +82,7 @@ const TaskList: React.FC<Props> = ({
                   onUnfocus={onUnfocus}
                   onComplete={onComplete}
                   onDelete={(id) => onDelete(id)}
-                  onAbandon={onAbandon}
+  
                   onCarryOver={onCarryOver}
                   onEdit={onEdit}
                 />
@@ -112,7 +112,7 @@ const TaskList: React.FC<Props> = ({
                     onUnfocus={onUnfocus}
                     onComplete={onComplete}
                     onDelete={(id) => onDelete(id)}
-                    onAbandon={onAbandon}
+    
                     onCarryOver={onCarryOver}
                     onRestore={onRestore}
                     onEdit={onEdit}
